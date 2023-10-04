@@ -1,0 +1,92 @@
+using Microsoft.AspNetCore.Mvc;
+using StudentManager.Models;
+using StudentManager.Utils;
+
+namespace StudentManager.Controllers;
+
+public class StudentController : Controller
+{
+    private readonly IRepository<Student,int> _repo;
+    
+    public StudentController(IRepository<Student,int> repo)
+    {
+        _repo = repo;
+    }
+    public IActionResult List(string searchString)
+    {
+        IEnumerable<Student> students = _repo.SelectAll();
+        
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            students = students.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
+        }
+
+        var studentVm = new StudentVM
+        {
+            Students = students.ToList(),
+            SearchString = searchString
+        };
+
+        return View(studentVm);
+    }
+
+    [HttpGet]
+    public RedirectToActionResult create()
+    {
+        var newStudent = new Student();
+
+        //_repo.Insert(newStudent);
+        
+        return RedirectToAction("Edit", new {model = newStudent});
+    }
+    
+    [HttpGet]
+    public RedirectToActionResult Save(Student model)
+    {
+        if (!ModelState.IsValid)
+            return RedirectToAction("Edit", model);
+        
+        if (model.Id != 0)
+            _repo.Update(model);
+        else
+            _repo.Insert(model);
+        
+        return RedirectToAction("List");
+    }
+    
+    
+    public RedirectToActionResult Delete(int id)
+    {
+        _repo.Delete(id);
+        
+        return RedirectToAction("List");
+    }
+
+    [HttpGet]
+    public IActionResult Edit()
+    {
+        var newStudent = new Student();
+        return View(newStudent);
+    }
+    
+    [HttpPost]
+    public IActionResult Edit(Student model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        
+        if (model.Id != 0)
+            _repo.Update(model);
+        else
+            _repo.Insert(model);
+        
+        return RedirectToAction("List");
+    }
+    
+    public RedirectToActionResult EditId(int id)
+    {
+        Console.WriteLine($"EditId {id}");
+        var model = _repo.Select(id);
+        return RedirectToAction("Edit",model);
+    }
+}

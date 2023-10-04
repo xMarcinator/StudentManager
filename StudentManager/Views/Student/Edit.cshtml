@@ -1,0 +1,58 @@
+@model StudentManager.Models.Student
+
+@{
+    ViewBag.Title = Model.Name ?? "New Student";
+    Layout = "_Layout";
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+<div class="card">
+    <div class="card-body">
+        <div id="ProfileIcon" class="col-md-auto" style="margin: auto;width: 100px">
+            <img src="~/img/@(Model.ProfilePicture ?? "DefaultProfile.png")" style="height: 10rem; width: 10rem;" alt="Student profile picture"/>
+        </div>
+
+        <form asp-controller="Student" method="post" asp-action="Edit">
+            <input asp-for="Id" style="display: none">
+            
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Name">
+                <span asp-validation-for="Name" class="invalid-feedback"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" placeholder="Email">
+                <span asp-validation-for="Email" class="invalid-feedback"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Education" class="form-label">Education</label>
+                <input asp-for="Education" class="form-control" placeholder="Education">
+                <span asp-validation-for="Education" class="invalid-feedback"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Semester" class="form-label">Semester</label>
+                <input asp-for="Semester" class="form-control">
+                <span asp-validation-for="Semester" class="invalid-feedback"></span>
+            </div>
+            @{
+                if (Model.Id == 0)
+                {
+                    @Html.ActionLink("Cancel", "List", "Student", null, new { @class = "btn btn-danger" })
+                    <button type="submit" class="btn btn-success">Save</button>
+                }
+                else
+                {
+                    @Html.ActionLink("Delete", "Delete", "Student", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                    <button type="submit" class="btn btn-success">Update</button>
+                }
+            }
+        </form>
+    </div>
+</div>

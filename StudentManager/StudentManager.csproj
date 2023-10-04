@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+
+
+
+
+
+    <ItemGroup>
+      <Folder Include="wwwroot\img\" />
+      <Folder Include="wwwroot\lib\bootstrap\dist\" />
+    </ItemGroup>
+
+
+
+
+
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.bundle.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.esm.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.min.js.map" />
+    </ItemGroup>
+
+</Project>

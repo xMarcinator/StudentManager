@@ -1,0 +1,78 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.student-container {
+    position: relative;
+    text-overflow: ellipsis;
+}
+.student-container #Student-Header {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.student-container #Student-Header > div {
+    text-overflow: ellipsis;
+}
+
+.student-container #Student-Header #ProfileIcon img {
+    object-fit: contain;
+    height: 3rem;
+    width: 3rem;
+}
+
+#ProfileIcon img {
+    border-radius: 50%;
+}
+
+
+.field-validation-error {
+    border-color: #dc3545;
+}
+
+
+.student-container .card-body > div {
+    margin-bottom: 0.5rem;
+}
+
+
+.student-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-gap: 1rem;
+}
+
+.field-label-style {
+    font-weight: bold;
+}
+
+.Student-Edit {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+#ThemeToggler {
+    margin: 1rem;
+}
+

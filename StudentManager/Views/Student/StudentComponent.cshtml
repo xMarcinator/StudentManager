@@ -1,0 +1,25 @@
+@model StudentManager.Models.Student
+
+<div class="student-container card">
+    <div class="card-body">
+        <a href="@Url.Action("EditId", "Student", new {Model.Id})">
+            <i class="fa-solid fa-pen Student-Edit"></i>
+        </a>
+
+        <div id="Student-Header" class="row">
+            <div class="col-auto">
+                <div id="ProfileIcon" class="col-md-auto">
+                    <img src="~/img/@(Model.ProfilePicture ?? "DefaultProfile.png")" alt="Student profile picture"/>
+                </div>
+            </div>
+            <div class="col overflow-hidden">
+                <h5 class="card-title">@Model.Name</h5>
+                <div class="overflow-hidden" style="text-overflow: ellipsis;overflow-wrap: normal;" title="@Model.Email">@Model.Email</div>
+            </div>
+        </div>
+        <div>
+            <label asp-for="Education" class="field-label-style">Education:</label> <span class="field-style">@Model.Education</span> <br/>
+            <label asp-for="Semester" class="field-label-style">Semester:</label> <span>@Model.Semester</span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+@model StudentVM
+
+@{
+    ViewBag.Title = "Student List";
+    Layout = "_Layout";
+}
+
+<h1>Students (@Model.Students.Count)</h1>
+<p style="color: darkgray">All registered students are listed here</p>
+
+
+<div class="d-flex justify-content-between">
+    <form asp-action="List" method="get" style="border: 2px solid var(--bs-primary); border-radius: 5px;">
+        <i class="fa-solid fa-magnifying-glass" style="padding: 10px;"></i>
+        <input asp-for="SearchString" style="outline: none;border: 0; background-color: var(--bs-body-bg)">
+    </form>
+    <a asp-action="Edit" asp-controller="Student" class="btn btn-primary">Create Student</a>
+</div>
+    <br/>
+
+@{
+    if (Model.Students.Count != 0)
+    {
+        <div class="row g-4 row-cols-1 row-cols-xl-4 row-cols-lg-3 row-cols-md-2">
+            @foreach (var student in Model.Students)
+            {
+                <div class="col">
+                      <partial name="studentComponent.cshtml" model="student"/>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <h1 style="text-align: center">@(!Model.SearchString.Equals("") ? "No students Match search": "There are no registered students" )</h1>
+    }
+}
