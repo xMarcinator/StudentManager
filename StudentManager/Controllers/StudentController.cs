@@ -29,6 +29,19 @@ public class StudentController : Controller
 
         return View(studentVm);
     }
+    
+    public PartialViewResult GetPartialStudentList(string? searchString)
+    {
+        var students = _repo.SelectAll();
+        
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            students = students.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
+        }
+        
+        return PartialView("StudentListPartial", students);
+    }
+
 
     [HttpGet]
     public RedirectToActionResult create()

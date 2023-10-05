@@ -5,12 +5,12 @@
     Layout = "_Layout";
 }
 
-<h1>Students (@Model.Students.Count)</h1>
+<h1>Students (<span id="StudentCount">@Model.Students.Count</span>)</h1>
 <p style="color: darkgray">All registered students are listed here</p>
 
 
 <div class="d-flex justify-content-between">
-    <form asp-action="List" method="get" style="border: 2px solid var(--bs-primary); border-radius: 5px;">
+    <form id="SearchForm" style="border: 2px solid var(--bs-primary); border-radius: 5px;">
         <i class="fa-solid fa-magnifying-glass" style="padding: 10px;"></i>
         <input asp-for="SearchString" style="outline: none;border: 0; background-color: var(--bs-body-bg)">
     </form>
@@ -18,20 +18,60 @@
 </div>
     <br/>
 
-@{
-    if (Model.Students.Count != 0)
-    {
-        <div class="row g-4 row-cols-1 row-cols-xl-4 row-cols-lg-3 row-cols-md-2">
-            @foreach (var student in Model.Students)
-            {
-                <div class="col">
-                      <partial name="studentComponent.cshtml" model="student"/>
-                </div>
-            }
-        </div>
+<div id="ListContainer">
+    @{
+        if (Model.Students.Count == 0 && !Model.SearchString.Equals(""))
+        {
+            <h1 style="text-align: center">@(!Model.SearchString.Equals("") ? "No students Match search": "There are no registered students" )</h1>
+        }
+        else
+        {
+            <partial name="StudentListPartial" model="@Model.Students"/>
+        }
     }
-    else
-    {
-        <h1 style="text-align: center">@(!Model.SearchString.Equals("") ? "No students Match search": "There are no registered students" )</h1>
-    }
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        let callbackID = 0;
+        function debounce(callback, delay = 500){
+            clearTimeout(callbackID);
+            callbackID = setTimeout(() => {
+                callback();
+            }, delay);
+        }    
+        
+        
+        async function updateList(searchString){
+            const response = await fetch(`@Url.Action("GetPartialStudentList")?SearchString=${searchString}`);
+            
+            let container = document.getElementById("ListContainer");
+            
+            container.innerHTML = await response.text();
+            
+            document.getElementById("StudentCount").innerHTML = `${container.children[0].children.length}`;
+        }
+           
+        
+        document.getElementById("SearchString").addEventListener("keyup", (e) => {
+            const searchString = e.target.value;
+             if (e.isComposing || e.key === "Enter") {
+                return;
+             }
+                        
+            debounce(()=>updateList(searchString),300);
+        })
+        
+        document.getElementById("SearchForm").addEventListener("submit",async (e)=>{
+            e.preventDefault();
+            console.log("Form Submitted")
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            await updateList(data.SearchString);
+        })
+       
+    </script>
 }

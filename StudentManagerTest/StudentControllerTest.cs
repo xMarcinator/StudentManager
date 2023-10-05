@@ -27,7 +27,6 @@ public class StudentControllerTest
         ViewResult result = (ViewResult)controller.Edit(1);
 
         var model = result.ViewData!;
-        
         Assert.NotNull(model);
 
         Type type = typeof(Student);
