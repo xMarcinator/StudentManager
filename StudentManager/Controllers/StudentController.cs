@@ -63,10 +63,10 @@ public class StudentController : Controller
     }
 
     [HttpGet]
-    public IActionResult Edit()
+    public IActionResult Edit(int? id)
     {
-        var newStudent = new Student();
-        return View(newStudent);
+        var model = id.HasValue ? _repo.Select(id.Value) :  new Student();
+        return View(model);
     }
     
     [HttpPost]
@@ -81,12 +81,5 @@ public class StudentController : Controller
             _repo.Insert(model);
         
         return RedirectToAction("List");
-    }
-    
-    public RedirectToActionResult EditId(int id)
-    {
-        Console.WriteLine($"EditId {id}");
-        var model = _repo.Select(id);
-        return RedirectToAction("Edit",model);
     }
 }

@@ -24,9 +24,9 @@ public class StudentControllerTest
         
         var controller = new StudentController(mock.Object);
         
-        RedirectToActionResult result = controller.EditId(1);
+        ViewResult result = (ViewResult)controller.Edit(1);
 
-        var model = result.RouteValues!;
+        var model = result.ViewData!;
         
         Assert.NotNull(model);
 
