@@ -20,9 +20,9 @@
 
 <div id="ListContainer">
     @{
-        if (Model.Students.Count == 0 && !Model.SearchString.Equals(""))
+        if (Model.Students.Count == 0 && string.IsNullOrEmpty(Model.SearchString))
         {
-            <h1 style="text-align: center">@(!Model.SearchString.Equals("") ? "No students Match search": "There are no registered students" )</h1>
+            <h1 style="text-align: center">There are no registered students</h1>
         }
         else
         {

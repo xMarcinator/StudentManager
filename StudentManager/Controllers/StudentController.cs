@@ -12,7 +12,7 @@ public class StudentController : Controller
     {
         _repo = repo;
     }
-    public IActionResult List(string searchString)
+    public IActionResult List(string? searchString)
     {
         IEnumerable<Student> students = _repo.SelectAll();
         

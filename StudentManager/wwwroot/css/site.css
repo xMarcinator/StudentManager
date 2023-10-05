@@ -1,3 +1,7 @@
+[data-bs-theme=dark] {
+    --bs-body-bg: #141414; !important;
+}
+
 html {
   font-size: 14px;
 }
