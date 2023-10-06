@@ -12,6 +12,7 @@
 
 
     <ItemGroup>
+      <Folder Include="dst\" />
       <Folder Include="wwwroot\img\" />
       <Folder Include="wwwroot\lib\bootstrap\dist\" />
     </ItemGroup>
