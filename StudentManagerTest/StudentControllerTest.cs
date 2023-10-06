@@ -18,30 +18,17 @@ public class StudentControllerTest
         
         var mock = new Mock<IRepository<Student,int>>();
         
-        mock.Setup(m=>m.Select(
-            1 //Any value
-        )).Returns(testData);
+        mock.Setup(m=>m.Select(1))
+            .Returns(testData)
+            .Verifiable(Times.Once);
         
         var controller = new StudentController(mock.Object);
         
-        ViewResult result = (ViewResult)controller.Edit(1);
-
-        var model = result.ViewData!;
+        var model = (controller.Edit(1) as ViewResult)?.ViewData.Model as Student;
         Assert.NotNull(model);
-
-        Type type = typeof(Student);
         
-        Assert.True(model.All((keyPair) =>
-        {
-            PropertyInfo? property =  type.GetProperty(keyPair.Key);
-            
-            Assert.NotNull(property);
-
-            var val = property.GetValue(testData);
-
-            return Equals(keyPair.Value, val);
-        }));
+        Assert.Equal(testData, model);
         
-        mock.Verify(m => m.Select(1), Times.Once);
+        mock.Verify();
     }
 }

@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<h1>Students (<span id="StudentCount">@Model.Students.Count</span>)</h1>
+<h1>Students (<span id="StudentCount">@Model.Students.Count()</span>)</h1>
 <p style="color: darkgray">All registered students are listed here</p>
 
 
@@ -19,16 +19,7 @@
     <br/>
 
 <div id="ListContainer">
-    @{
-        if (Model.Students.Count == 0 && string.IsNullOrEmpty(Model.SearchString))
-        {
-            <h1 style="text-align: center">There are no registered students</h1>
-        }
-        else
-        {
-            <partial name="StudentListPartial" model="@Model.Students"/>
-        }
-    }
+    <partial name="StudentListPartial" model="@Model"/>
 </div>
 
 @section Scripts
@@ -51,6 +42,19 @@
             container.innerHTML = await response.text();
             
             document.getElementById("StudentCount").innerHTML = `${container.children[0].children.length}`;
+            
+            window.history.pushState("","",`?SearchString=${searchString}`);
+            
+            if (history.pushState) {
+                const baseURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                let newurl;
+                if (searchString !== "")
+                    newurl = `${baseURL}?SearchString=${searchString}`;
+                else 
+                    newurl = baseURL;     
+                
+                window.history.pushState({path:newurl},'',newurl);
+            } 
         }
            
         

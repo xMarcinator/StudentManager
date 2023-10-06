@@ -12,25 +12,8 @@ public class StudentController : Controller
     {
         _repo = repo;
     }
-    public IActionResult List(string? searchString)
-    {
-        IEnumerable<Student> students = _repo.SelectAll();
-        
-        if (!string.IsNullOrEmpty(searchString))
-        {
-            students = students.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
-        }
-
-        var studentVm = new StudentVM
-        {
-            Students = students.ToList(),
-            SearchString = searchString
-        };
-
-        return View(studentVm);
-    }
     
-    public PartialViewResult GetPartialStudentList(string? searchString)
+    public IEnumerable<Student> GetStudentList(string? searchString)
     {
         var students = _repo.SelectAll();
         
@@ -39,7 +22,29 @@ public class StudentController : Controller
             students = students.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
         }
         
-        return PartialView("StudentListPartial", students);
+        return students;
+    }
+    
+    public IActionResult List(string? searchString)
+    {
+        var studentVm = new StudentVM
+        {
+            Students = GetStudentList(searchString),
+            SearchString = searchString
+        };
+
+        return View(studentVm);
+    }
+    
+    public PartialViewResult GetPartialStudentList(string? searchString)
+    {
+        var studentVm = new StudentVM
+        {
+            Students = GetStudentList(searchString),
+            SearchString = searchString
+        };
+        
+        return PartialView("StudentListPartial", studentVm);
     }
 
 
