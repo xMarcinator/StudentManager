@@ -1,28 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentManager.Models;
+using StudentManager.Models.DBUtils;
 using StudentManager.Utils;
 
 namespace StudentManager.Controllers;
 
 public class StudentController : Controller
 {
-    private readonly IRepository<Student,int> _repo;
+    private readonly IStudentRepository _repo;
     
-    public StudentController(IRepository<Student,int> repo)
+    public StudentController(IStudentRepository repo)
     {
         _repo = repo;
     }
     
     public IEnumerable<Student> GetStudentList(string? searchString)
     {
-        var students = _repo.SelectAll();
+        var students = _repo.Students;
         
         if (!string.IsNullOrEmpty(searchString))
         {
             students = students.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
         }
         
-        return students;
+        return students.Take(10);
     }
     
     public IActionResult List(string? searchString)
@@ -64,8 +65,8 @@ public class StudentController : Controller
         if (!ModelState.IsValid)
             return RedirectToAction("Edit", model);
         
-        if (model.Id != 0)
-            _repo.Update(model);
+        if (_repo.Students.SingleOrDefault(b => b.Id == model.Id).IsNotNull(out var dbModel))
+            dbModel.Update(model);
         else
             _repo.Insert(model);
         

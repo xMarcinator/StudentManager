@@ -12,7 +12,7 @@
 
 
     <ItemGroup>
-      <Folder Include="dst\" />
+      <Folder Include="Migrations\" />
       <Folder Include="wwwroot\img\" />
       <Folder Include="wwwroot\lib\bootstrap\dist\" />
     </ItemGroup>
@@ -36,6 +36,20 @@
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.min.js" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\js\bootstrap.min.js.map" />
       <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+    </ItemGroup>
+
+
+
+
+
+
+    <ItemGroup>
+      <PackageReference Include="DotNetEnv" Version="2.5.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
     </ItemGroup>
 
 </Project>

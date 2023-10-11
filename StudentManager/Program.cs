@@ -1,5 +1,10 @@
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using StudentManager.Models;
+using StudentManager.Models.DBUtils;
 using StudentManager.Utils;
+
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +13,10 @@ builder.Services.AddControllersWithViews();
 
 
 builder.Services.AddSingleton<IRepository<Student,int>>(new StudentRepo());
+
+builder.Services.AddDbContext<StudentManagementDb>();
+
+builder.Services.AddScoped<IStudentRepository, EFStudentRepository>();
 
 var app = builder.Build();
 
@@ -18,6 +27,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+
+SeedDb.EnsurePopulated(app);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
