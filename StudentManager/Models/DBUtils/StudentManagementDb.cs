@@ -11,7 +11,7 @@ public class StudentManagementDb : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        string? connectionString = System.Environment.GetEnvironmentVariable("DBSTRING");
+        string? connectionString = Environment.GetEnvironmentVariable("DBSTRING");
 
         if (connectionString is null)
         {

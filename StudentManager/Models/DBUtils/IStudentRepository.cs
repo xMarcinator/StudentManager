@@ -1,8 +1,15 @@
 namespace StudentManager.Models.DBUtils;
 
-public interface IStudentRepository
+public interface IModelRepository<T>
 {
-    public IQueryable<Student> Students { get; }
+    public bool AutoSave { get; set; }
+    public IQueryable<T> Models { get; }
+
+    public void Insert(T model);
+    public void Update(T model);
+    public void Delete(T model);
+
+    public void SaveChanges();
     
-    public void Insert(Student model);
+    
 }
