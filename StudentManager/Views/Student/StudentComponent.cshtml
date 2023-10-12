@@ -13,13 +13,13 @@
                 </div>
             </div>
             <div class="col overflow-hidden">
-                <h5 class="card-title">@Model.Name</h5>
+                <h5 class="card-title">@Model.FirstName @Model.LastName</h5>
                 <div class="overflow-hidden" style="text-overflow: ellipsis;overflow-wrap: normal;" title="@Model.Email">@Model.Email</div>
             </div>
         </div>
         <div>
-            <label asp-for="Education" class="field-label-style">Education:</label> <span class="field-style">@Model.Education</span> <br/>
-            <label asp-for="Semester" class="field-label-style">Semester:</label> <span>@Model.Semester</span>
+            <label asp-for="Class.Education.Name" class="field-label-style">Education:</label> <span class="field-style">@Model.Class.Education.Name</span> <br/>
+            <label asp-for="Class.Semester" class="field-label-style">Semester:</label> <span>@Model.Class.Semester</span>
         </div>
     </div>
 </div>

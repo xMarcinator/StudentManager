@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentManager.Models;
 using StudentManager.Models.DBUtils;
 using StudentManager.Utils;
@@ -7,20 +8,25 @@ namespace StudentManager.Controllers;
 
 public class StudentController : Controller
 {
-    private readonly IModelRepository<Student> _repo;
+    private readonly IModelRepository<Student> _repoStudent;
+    private readonly IModelRepository<Education> _repoEdu;
     
-    public StudentController(IModelRepository<Student> repo)
+    public StudentController(IModelRepository<Student> repoStudent)
     {
-        _repo = repo;
+        _repoStudent = repoStudent;
     }
     
     public IEnumerable<Student> GetStudentList(string? searchString)
     {
-        var students = _repo.Models;
+        var students = _repoStudent.Models
+            .Include(o=>o.Class)
+            .ThenInclude(o=>o.Education);
         
         if (!string.IsNullOrEmpty(searchString))
         {
-            students = students.Where(s => s.Name.ToLower().Contains(searchString.ToLower()));
+            return students.Where(s => s.FirstName.ToLower().Contains(searchString.ToLower())
+                                                ||s.LastName.ToLower().Contains(searchString.ToLower()))
+                .Take(10);
         }
         
         return students.Take(10);
@@ -65,10 +71,10 @@ public class StudentController : Controller
         if (!ModelState.IsValid)
             return RedirectToAction("Edit", model);
         
-        if (model.Id != 0)
-            _repo.Update(model);
+        if (_repoStudent.Models.SingleOrDefault(b => b.Id == model.Id).IsNotNull(out var dbModel))
+            _repoStudent.Update(model);
         else
-            _repo.Insert(model);
+            _repoStudent.Insert(model);
         
         return RedirectToAction("List");
     }
@@ -76,7 +82,7 @@ public class StudentController : Controller
     
     public RedirectToActionResult Delete(Student model)
     {
-        _repo.Delete(model);
+        _repoStudent.Delete(model);
         
         return RedirectToAction("List");
     }
@@ -84,22 +90,50 @@ public class StudentController : Controller
     [HttpGet]
     public IActionResult Edit(int? id)
     {
-        if (!id.HasValue || !_repo.Models.SingleOrDefault((model) => model.Id == id).IsNotNull(out var model))
-            model = new Student();
+        Student? model = null;
+
+        if (!id.HasValue)
+        {
+            model = _repoStudent.Models
+                .Where(model => model.Id == id)
+                .Include(o => o.Class)
+                .ThenInclude(o => o.Education)
+                .Include(o => o.Class)
+                .ThenInclude(o => o.Courses)
+                .FirstOrDefault();
+        }
+
+        model ??= new Student();
+           
+
+        var editVM = new StudentEditVM()
+        {
+            student = model,
+            possibleEducations = _repoEdu.Models.Include(o => o.Courses)
+        };
         
-        return View(model);
+        return View(editVM);
     }
     
     [HttpPost]
     public IActionResult Edit(Student model)
     {
         if (!ModelState.IsValid)
-            return View(model);
+        {
+            var editVM = new StudentEditVM()
+            {
+                student = model,
+                possibleEducations = _repoEdu.Models.Include(o => o.Courses)
+            };
+            
+            return View(editVM);
+        }
+           
         
         if (model.Id != 0)
-            _repo.Update(model);
+            _repoStudent.Update(model);
         else
-            _repo.Insert(model);
+            _repoStudent.Insert(model);
         
         return RedirectToAction("List");
     }
