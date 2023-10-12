@@ -2,7 +2,7 @@ using StudentManager.Models.DBUtils;
 
 namespace StudentManager.Models;
 
-public class EFStudentRepository : IStudentRepository
+public class EFStudentRepository : IModelRepository<Student>
 {
     public EFStudentRepository(StudentManagementDb db)
     {
@@ -10,9 +10,31 @@ public class EFStudentRepository : IStudentRepository
     }
     public StudentManagementDb Db { get; set; }
 
-    public IQueryable<Student> Students => Db.Students;
+    public bool AutoSave { get; set; } = true;
+    public IQueryable<Student> Models => Db.Students;
     public void Insert(Student model)
     {
         Db.Students.Add(model);
+        
+        if (AutoSave) SaveChanges();
+    }
+
+    public void Update(Student model)
+    {
+        Db.Students.Update(model);
+        
+        if (AutoSave) SaveChanges();
+    }
+
+    public void Delete(Student model)
+    {
+        Db.Students.Remove(model);
+        
+        if (AutoSave) SaveChanges();
+    }
+
+    public void SaveChanges()
+    {
+        Db.SaveChanges();
     }
 }

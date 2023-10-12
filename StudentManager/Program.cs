@@ -4,19 +4,18 @@ using StudentManager.Models;
 using StudentManager.Models.DBUtils;
 using StudentManager.Utils;
 
-DotNetEnv.Env.Load();
+DotNetEnv.Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
 builder.Services.AddSingleton<IRepository<Student,int>>(new StudentRepo());
 
 builder.Services.AddDbContext<StudentManagementDb>();
 
-builder.Services.AddScoped<IStudentRepository, EFStudentRepository>();
+builder.Services.AddScoped<IModelRepository<Student>, EFStudentRepository>();
 
 var app = builder.Build();
 

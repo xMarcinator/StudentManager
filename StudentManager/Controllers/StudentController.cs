@@ -7,16 +7,16 @@ namespace StudentManager.Controllers;
 
 public class StudentController : Controller
 {
-    private readonly IStudentRepository _repo;
+    private readonly IModelRepository<Student> _repo;
     
-    public StudentController(IStudentRepository repo)
+    public StudentController(IModelRepository<Student> repo)
     {
         _repo = repo;
     }
     
     public IEnumerable<Student> GetStudentList(string? searchString)
     {
-        var students = _repo.Students;
+        var students = _repo.Models;
         
         if (!string.IsNullOrEmpty(searchString))
         {
@@ -65,7 +65,7 @@ public class StudentController : Controller
         if (!ModelState.IsValid)
             return RedirectToAction("Edit", model);
         
-        if (_repo.Students.SingleOrDefault(b => b.Id == model.Id).IsNotNull(out var dbModel))
+        if (_repo.Models.SingleOrDefault(b => b.Id == model.Id).IsNotNull(out var dbModel))
             dbModel.Update(model);
         else
             _repo.Insert(model);
@@ -74,9 +74,9 @@ public class StudentController : Controller
     }
     
     
-    public RedirectToActionResult Delete(int id)
+    public RedirectToActionResult Delete(Student model)
     {
-        _repo.Delete(id);
+        _repo.Delete(model);
         
         return RedirectToAction("List");
     }
@@ -84,7 +84,9 @@ public class StudentController : Controller
     [HttpGet]
     public IActionResult Edit(int? id)
     {
-        var model = id.HasValue ? _repo.Select(id.Value) :  new Student();
+        if (!id.HasValue || !_repo.Models.SingleOrDefault((model) => model.Id == id).IsNotNull(out var model))
+            model = new Student();
+        
         return View(model);
     }
     
