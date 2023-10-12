@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using StudentManager.Models.DBUtils;
 using StudentManager.Utils;
 
 namespace StudentManager.Models;
@@ -33,7 +34,20 @@ public class StudentManagementDb : DbContext
         
         optionsBuilder.UseSqlServer(builder.ConnectionString);
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ClassModel>(builder =>
+        {
+            // Date is a DateOnly property and date on database
+            builder.Property(x => x.StartDate)
+                .HasConversion<DateOnlyConverter, DateOnlyComparer>();
+        });
+    }
 
     public DbSet<Student> Students { get; set; } = null!;
+    public DbSet<ClassModel> Classes { get; set; } = null!;
+    public DbSet<Course> Courses { get; set; } = null!;
+    public DbSet<Education> Educations { get; set; } = null!;
 }
 

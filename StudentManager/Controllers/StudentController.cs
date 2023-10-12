@@ -65,8 +65,8 @@ public class StudentController : Controller
         if (!ModelState.IsValid)
             return RedirectToAction("Edit", model);
         
-        if (_repo.Models.SingleOrDefault(b => b.Id == model.Id).IsNotNull(out var dbModel))
-            dbModel.Update(model);
+        if (model.Id != 0)
+            _repo.Update(model);
         else
             _repo.Insert(model);
         

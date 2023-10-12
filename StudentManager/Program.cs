@@ -11,8 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<IRepository<Student,int>>(new StudentRepo());
-
 builder.Services.AddDbContext<StudentManagementDb>();
 
 builder.Services.AddScoped<IModelRepository<Student>, EFStudentRepository>();

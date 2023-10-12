@@ -25,7 +25,6 @@ public class StudentControllerTest
             new Student {Id = 2, Name = "***REMOVED*** doe", Education = "Datamtiker", Semester = 2} 
         });
         
-        
         mock.Setup(x => x.Models)
             .Returns(dummyData.AsQueryable())
             .Verifiable(Times.Once);
