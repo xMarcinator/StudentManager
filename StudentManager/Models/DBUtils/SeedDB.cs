@@ -19,7 +19,7 @@ public class SeedDb
 
         if (!context.Students.Any())
         {
-            var fakeStudents = FakeStudent.Fake(classSize*classCount);
+            var fakeStudents = StudentFaker.Fake(classSize*classCount);
             var fakeClasses = ClassFaker.Fake(classCount);
             var fakeEducations = EducationFaker.Fake(1);
 

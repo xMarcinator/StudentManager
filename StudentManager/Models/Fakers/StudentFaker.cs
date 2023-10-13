@@ -2,7 +2,7 @@ using Bogus;
 
 namespace StudentManager.Models.Fakers;
 
-public class FakeStudent
+public class StudentFaker
 {
     private static readonly string?[] Icons = new[] { "***REMOVED***", "***REMOVED***", null };
     private static Faker<Student>? _studentFaker;
@@ -11,9 +11,9 @@ public class FakeStudent
     public static Faker<Student> i()
     {
         _studentFaker ??= new Faker<Student>()
-            .RuleFor(o => o.Email, f => f.Internet.Email(provider:"eamv.dk"))
             .RuleFor(o => o.FirstName, f => f.Name.FirstName())
             .RuleFor(o => o.LastName, f => f.Name.LastName())
+            .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName,provider:"eamv.dk"))
             .RuleFor(o => o.ProfilePicture, f => f.PickRandom(Icons))
             .RuleFor(b => b.Class, _ => null);
         
@@ -29,13 +29,13 @@ public class FakeStudent
 
     public static List<Student> Fake(int count, Boolean fakeForeign = false)
     {
-        var tmp = FakeStudent.i().Generate(count);
+        var tmp = StudentFaker.i().Generate(count);
         return tmp;
     }
     
     public static List<Student> FakeTest(int count, Boolean fakeForeign = false)
     {
-        var tmp = FakeStudent.iTest().Generate(count);
+        var tmp = StudentFaker.iTest().Generate(count);
         return tmp;
     }
 }

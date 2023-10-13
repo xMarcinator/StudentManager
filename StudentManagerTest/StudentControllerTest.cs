@@ -19,7 +19,7 @@ public class StudentControllerTest
     {
         var mock = new Mock<IModelRepository<Student>>();
 
-        var dummyData = FakeStudent.FakeTest(3);
+        var dummyData = StudentFaker.FakeTest(3);
         
         
         mock.Setup(x => x.Models)
