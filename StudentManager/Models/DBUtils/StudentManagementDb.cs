@@ -12,6 +12,7 @@ public class StudentManagementDb : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        Console.WriteLine("Configuring db");
         string? connectionString = Environment.GetEnvironmentVariable("DBSTRING");
 
         if (connectionString is null)
@@ -21,7 +22,7 @@ public class StudentManagementDb : DbContext
         
         SqlConnectionStringBuilder builder = new(connectionString);
         
-        Console.WriteLine(builder.InitialCatalog);
+        //Console.WriteLine(builder.InitialCatalog);
         
         builder.InitialCatalog = Environment.GetEnvironmentVariable("DBNAME") 
                                  ?? throw new Exception("DBNAME environment variable not set");
