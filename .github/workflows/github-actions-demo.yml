@@ -17,3 +17,7 @@ jobs:
       # You can test your matrix by printing the current dotnet version
       - name: Display dotnet version
         run: dotnet --version
+      - name: Test the project before packing
+        run: dotnet test StudentManagerTest 
+      - name: Display dotnet version
+        run: dotnet --version
