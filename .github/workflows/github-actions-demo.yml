@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [ '3.1.x', '6.0.x' ]
+        dotnet-version: ['6.0.x' ]
       
     steps:
       - uses: actions/checkout@v4
@@ -19,5 +19,7 @@ jobs:
         run: dotnet --version
       - name: Test the project before packing
         run: dotnet test StudentManagerTest 
-      - name: Display dotnet version
-        run: dotnet --version
+      - name: build docker image
+        run: docker build -t marcinator/student-manager:latest  .\StudentManager\
+      - name: push image to repo
+        run: docker push marcinator/student-manager:latest

@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["StudentManager/StudentManager.csproj", "StudentManager/"]
-RUN dotnet restore "StudentManager/StudentManager.csproj"
-COPY . .
+COPY "StudentManager.csproj" "StudentManager/"
 WORKDIR "/src/StudentManager"
+RUN dotnet restore "StudentManager.csproj"
+COPY . .
 RUN dotnet build "StudentManager.csproj" -c Release -o /app/build
 
 FROM build AS publish
