@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<StudentManagementDb>();
 
 builder.Services.AddScoped<IModelRepository<Student>, EFStudentRepository>();
+builder.Services.AddScoped<IModelRepository<Education>, EFEducationRepository>();
 
 var app = builder.Build();
 

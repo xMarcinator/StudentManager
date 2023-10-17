@@ -7,8 +7,8 @@
 
 <div class="card">
 	<div class="card-body">
-		<div id="ProfileIcon" class="col-md-auto" style="margin: auto;width: 100px">
-			<img src="~/img/@(Model.student.ProfilePicture ?? "DefaultProfile.png")" style="height: 10rem; width: 10rem;" alt="Student profile picture"/>
+		<div id="ProfileIcon" class="col-md-auto position-relative" style="height: calc(10rem + 2rem)">
+			<img src="~/img/@(Model.student.ProfilePicture ?? "DefaultProfile.png")" class="position-absolute top-50 start-50 translate-middle" style="height: 10rem; width: 10rem;" alt="Student profile picture"/>
 		</div>
 
 		<form asp-controller="Student" method="post" asp-action="Edit">
@@ -16,12 +16,12 @@
 
 			<div class="mb-3 row">
 				<div class="col-6">
-					<label asp-for="student.FirstName" class="form-label">Name</label>
+					<label asp-for="student.FirstName" class="form-label">First Name</label>
 					<input asp-for="student.FirstName" class="form-control" placeholder="Name">
 					<span asp-validation-for="student.FirstName" class="invalid-feedback"></span>
 				</div>
 				<div class="col-6">
-					<label asp-for="student.LastName" class="form-label">Name</label>
+					<label asp-for="student.LastName" class="form-label">Last Name</label>
 					<input asp-for="student.LastName" class="form-control" placeholder="Name">
 					<span asp-validation-for="student.LastName" class="invalid-feedback"></span>
 				</div>
@@ -35,43 +35,42 @@
 
 			<div class="mb-3 row">
 				<div class="col-6">
-					<label asp-for="student.Class" class="form-label">Education</label>
-					<select asp-for="student.Class">
+					<label for="Education"  class="form-label">Education</label>
+					<select id="Education"  class="form-select">
 						<option value="@null" disabled>No education</option>
 						@{
 							foreach (var edu in Model.possibleEducations)
 							{
-								if (Equals(edu.Id, Model.student.Class.Id))
+								if ( Model.student.Class.Id != 0 && Equals(edu.Id, Model.student.Class.Education.Id))
 								{
-									<option value="@edu" selected> @edu.Name</option>
+									<option value="@edu.Id" selected> @edu.Name</option>
 								}
 								else
 								{
-									<option value="@edu"> @edu.Name</option>
+									<option value="@edu.Id"> @edu.Name</option>
 								}
 							}
 						}
 					</select>
 				</div>
 				<div class="col-6">
-					<label asp-for="student.Class.Education.Courses" class="form-label">Education</label>
-					<select asp-for="student.Class.Education.Courses">
+					<label asp-for="student.ClassId" class="form-label">Class</label>
+					<select asp-for="student.ClassId" class="form-select">
 						<option value="@null" disabled>No Class</option>
 						@{
-							var classes = Model.possibleEducations
-								.SingleOrDefault(education => education.Id == Model.student.Class.Education.Id)?.Courses;
-							
+							var classes = Model.possibleEducations.SingleOrDefault((v)=>Equals(v.Id, Model.student.Class.Education.Id))?.Classes;
+
 							if (classes == null) return;
-							
+
 							foreach (var edu in classes)
 							{
 								if (Equals(edu.Id, Model.student.Class.Id))
 								{
-									<option value="@edu" selected> @edu.Name</option>
+									<option value="@edu.Id" selected> @edu.Name</option>
 								}
 								else
 								{
-									<option value="@edu"> @edu.Name</option>
+									<option value="@edu.Id"> @edu.Name</option>
 								}
 							}
 						}
@@ -81,8 +80,8 @@
 			</div>
 
 			<div class="mb-3">
-				<label asp-for="student.Class.Semester" class="form-label">Semester</label>
-				<input asp-for="student.Class.Semester" class="form-control">
+				<label for="Semester" class="form-label">Semester</label>
+				<input id="Semester" class="form-control" value="@Model.student.Class.Semester">
 			</div>
 			@{
 				if (Model.student.Id == 0)
@@ -102,7 +101,4 @@
 
 @section Scripts {
 	@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-	<script type="text/javascript">
-    document.getElementById("inputForm").addEventListener("change", (event) => {console.log("hello")}); 
-    </script>
 }

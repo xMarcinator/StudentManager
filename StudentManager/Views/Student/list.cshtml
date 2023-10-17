@@ -5,21 +5,23 @@
     Layout = "_Layout";
 }
 
-<h1>Students (<span id="StudentCount">@Model.Students.Count()</span>)</h1>
+<h1>Students (<span id="StudentCount">@Model.PagingInfo.TotalItems</span>)</h1>
 <p style="color: darkgray">All registered students are listed here</p>
 
 
 <div class="d-flex justify-content-between">
-    <form id="SearchForm" style="border: 2px solid var(--bs-primary); border-radius: 5px;">
-        <i class="fa-solid fa-magnifying-glass" style="padding: 10px;"></i>
-        <input asp-for="SearchString" style="outline: none;border: 0; background-color: var(--bs-body-bg)">
-    </form>
-    <a asp-action="Edit" asp-controller="Student" class="btn btn-primary">Create Student</a>
+  <form id="SearchForm" class="d-flex align-content-center" style="border: 2px solid var(--bs-primary); border-radius: 5px;">
+    <div id="SearchIconContainer" class="d-flex align-items-center justify-content-around">
+      <i class="fa-solid fa-magnifying-glass" style="padding: 10px;"></i>
+    </div>
+    <input asp-for="SearchString" style="outline: none;border: 0; background-color: var(--bs-body-bg); border-radius: 5px;">
+  </form>
+  <a asp-action="Edit" asp-controller="Student" class="btn btn-primary">Create Student</a>
 </div>
-    <br/>
+<br/>
 
 <div id="ListContainer">
-    <partial name="StudentListPartial" model="@Model"/>
+   <partial name="StudentListPartial" model="@Model"/>
 </div>
 
 @section Scripts
@@ -36,14 +38,12 @@
         
         async function updateList(searchString){
             const response = await fetch(`@Url.Action("GetPartialStudentList")?SearchString=${searchString}`);
-            
+           
+            document.getElementById("StudentCount").innerText =response.headers.get("X-Total-Count")
+			
             let container = document.getElementById("ListContainer");
             
             container.innerHTML = await response.text();
-            
-            document.getElementById("StudentCount").innerHTML = `${container.children[0].children.length}`;
-            
-            window.history.pushState("","",`?SearchString=${searchString}`);
             
             if (history.pushState) {
                 const baseURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
@@ -56,7 +56,6 @@
                 window.history.pushState({path:newurl},'',newurl);
             } 
         }
-           
         
         document.getElementById("SearchString").addEventListener("keyup", (e) => {
             const searchString = e.target.value;

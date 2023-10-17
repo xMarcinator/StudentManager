@@ -1,40 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using StudentManager.Models.DBUtils;
 
 namespace StudentManager.Models;
 
-public class EFStudentRepository : IModelRepository<Student>
+public class EFStudentRepository : EFBaseRepository<Student>
 {
-    public EFStudentRepository(StudentManagementDb db)
+    public EFStudentRepository(StudentManagementDb db) : base(db)
     {
-        Db = db;
-    }
-    public StudentManagementDb Db { get; set; }
-
-    public bool AutoSave { get; set; } = true;
-    public IQueryable<Student> Models => Db.Students;
-    public void Insert(Student model)
-    {
-        Db.Students.Add(model);
-        
-        if (AutoSave) SaveChanges();
     }
 
-    public void Update(Student model)
-    {
-        Db.Students.Update(model);
-        
-        if (AutoSave) SaveChanges();
-    }
-
-    public void Delete(Student model)
-    {
-        Db.Students.Remove(model);
-        
-        if (AutoSave) SaveChanges();
-    }
-
-    public void SaveChanges()
-    {
-        Db.SaveChanges();
-    }
+    private protected override DbSet<Student> TargetDbSet => Db.Students;
 }

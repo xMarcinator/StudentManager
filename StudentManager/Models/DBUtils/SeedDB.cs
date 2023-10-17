@@ -19,15 +19,18 @@ public class SeedDb
 
         if (!context.Students.Any())
         {
-            var fakeStudents = StudentFaker.Fake(classSize*classCount);
-            var fakeClasses = ClassFaker.Fake(classCount);
-            var fakeEducations = EducationFaker.Fake(1);
+            var fakeStudents = new StudentFaker().Generate(classSize*classCount);
+            var fakeClasses = new ClassFaker().Generate(classCount);
+            var fakeEducations = new EducationFaker().Generate(1);
+            var fakeCourses = new CourseFaker().Generate(2);
 
             var rng = new Random();
             
             for (int i = 0; i < fakeClasses.Count; i++)
             {
                 fakeClasses[i].Education = fakeEducations[0];
+
+                fakeClasses[i].Education.Courses = fakeCourses;
 
                 fakeClasses[i].Semester = rng.Next(fakeClasses[i].Education.SemesterCount);
                 

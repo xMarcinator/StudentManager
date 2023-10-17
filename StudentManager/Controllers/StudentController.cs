@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManager.Models;
 using StudentManager.Models.DBUtils;
+using StudentManager.Models.ViewModel;
 using StudentManager.Utils;
 
 namespace StudentManager.Controllers;
@@ -11,47 +12,75 @@ public class StudentController : Controller
     private readonly IModelRepository<Student> _repoStudent;
     private readonly IModelRepository<Education> _repoEdu;
     
-    public StudentController(IModelRepository<Student> repoStudent)
+    public StudentController(IModelRepository<Student> repoStudent,IModelRepository<Education> eduRepo)
     {
         _repoStudent = repoStudent;
+        _repoEdu = eduRepo;
     }
     
-    public IEnumerable<Student> GetStudentList(string? searchString)
+    public StudentVM GetStudentList(string? searchString,int productPage = 1)
     {
-        var students = _repoStudent.Models
+        var paging = new PagingInfo
+        {
+            CurrentPage = productPage,
+            ItemsPerPage = PageSize,
+            TotalItems = searchString != null ? 0 : _repoStudent.Models.Count()
+        };
+        
+        var students = (IQueryable<Student>) _repoStudent.Models
             .Include(o=>o.Class)
             .ThenInclude(o=>o.Education);
         
         if (!string.IsNullOrEmpty(searchString))
         {
-            return students.Where(s => s.FirstName.ToLower().Contains(searchString.ToLower())
-                                                ||s.LastName.ToLower().Contains(searchString.ToLower()))
-                .Take(10);
+            students = students.Where(s => s.FirstName.ToLower().Contains(searchString.ToLower())
+                                           || s.LastName.ToLower().Contains(searchString.ToLower()));
+            
+            paging.TotalItems = students.Count();
         }
         
-        return students.Take(10);
-    }
-    
-    public IActionResult List(string? searchString)
-    {
-        var studentVm = new StudentVM
-        {
-            Students = GetStudentList(searchString),
-            SearchString = searchString
-        };
+        students =  students.OrderBy(p => p.Id)
+            .Skip((productPage - 1) * PageSize)
+            .Take(PageSize);
+        
 
-        return View(studentVm);
-    }
-    
-    public PartialViewResult GetPartialStudentList(string? searchString)
-    {
+        if (paging.CurrentPage > paging.TotalPages)
+        {
+            paging.CurrentPage = 1;
+        }
+        
         var studentVm = new StudentVM
         {
-            Students = GetStudentList(searchString),
-            SearchString = searchString
+            Students = students,
+            SearchString = searchString,
+            PagingInfo = paging
         };
         
-        return PartialView("StudentListPartial", studentVm);
+        return studentVm;
+    }
+    
+    public class PagingInfo
+    {
+        public int CurrentPage { get; set; }
+        public int ItemsPerPage { get; set; }
+        public int TotalItems { get; set; }
+        // ReSharper disable once PossibleLossOfFraction
+        public int TotalPages => (int)(Math.Ceiling((double)TotalItems / ItemsPerPage));
+    }
+
+    private int PageSize = 4;
+    public IActionResult List(string? searchString,int? productPage)
+    {
+        return View(GetStudentList(searchString, productPage ?? 1));
+    }
+    
+    public PartialViewResult GetPartialStudentList(string? searchString,int? productPage)
+    {
+
+        var VM = GetStudentList(searchString, productPage ?? 1);
+        Response.Headers.Add("X-Total-Count", VM.PagingInfo.TotalItems.ToString());
+        
+        return PartialView("StudentListPartial", VM);
     }
 
 
@@ -92,14 +121,14 @@ public class StudentController : Controller
     {
         Student? model = null;
 
-        if (!id.HasValue)
+        if (id.HasValue)
         {
             model = _repoStudent.Models
                 .Where(model => model.Id == id)
                 .Include(o => o.Class)
                 .ThenInclude(o => o.Education)
                 .Include(o => o.Class)
-                .ThenInclude(o => o.Courses)
+                .ThenInclude(o => o.ClassCourses)
                 .FirstOrDefault();
         }
 
@@ -116,24 +145,20 @@ public class StudentController : Controller
     }
     
     [HttpPost]
-    public IActionResult Edit(Student model)
+    public IActionResult Edit(StudentEditVM model)
     {
         if (!ModelState.IsValid)
         {
-            var editVM = new StudentEditVM()
-            {
-                student = model,
-                possibleEducations = _repoEdu.Models.Include(o => o.Courses)
-            };
-            
-            return View(editVM);
+            model.possibleEducations = _repoEdu.Models.Include(o => o.Courses);
+                    
+            return View(model);
         }
            
         
-        if (model.Id != 0)
-            _repoStudent.Update(model);
+        if (model.student.Id != 0)
+            _repoStudent.Update(model.student);
         else
-            _repoStudent.Insert(model);
+            _repoStudent.Insert(model.student);
         
         return RedirectToAction("List");
     }

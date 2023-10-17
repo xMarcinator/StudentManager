@@ -21,5 +21,8 @@ public class Student
     [Column(TypeName = "nvarchar(255)")]
     public string Email { get; set; }
     
+    public int ClassId { get; set; }
     public ClassModel Class { get; set; } = new();
+    
+    public List<Course> ExplicitCourses { get; set; } = new();
 }

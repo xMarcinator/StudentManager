@@ -80,3 +80,12 @@ body {
     margin: 1rem;
 }
 
+.navbar {
+    height: 4rem;
+}
+
+#SearchForm #SearchIconContainer{
+    display: inline-block;
+    height: 3rem;
+    width: 3rem;
+}

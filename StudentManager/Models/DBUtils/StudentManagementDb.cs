@@ -43,6 +43,17 @@ public class StudentManagementDb : DbContext
             builder.Property(x => x.StartDate)
                 .HasConversion<DateOnlyConverter, DateOnlyComparer>();
         });
+        
+        //explicit naming override to give better table names
+        modelBuilder.Entity<ClassModel>()
+            .HasMany(e => e.ClassCourses)
+            .WithMany(e => e.Classes)
+            .UsingEntity("ClassAssignedCourses");
+        
+        modelBuilder.Entity<Student>()
+            .HasMany(e => e.ExplicitCourses)
+            .WithMany(e => e.ExplicitStudents)
+            .UsingEntity("StudentAssignedCourses");
     }
 
     public DbSet<Student> Students { get; set; } = null!;

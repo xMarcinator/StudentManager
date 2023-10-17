@@ -1,10 +1,9 @@
 ```mermaid
 erDiagram
     Student ||--o{ class : takes
-    class ||--o{ course : has
     grade ||--o{ Student : has
+    class }o--o{ course : has
+    Education }|--o{ course : has
     grade ||--o{ course : has
-    grade ||--o{ class : has
-    
-    
+    Education ||--o{ class : has
 ```

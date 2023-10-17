@@ -15,3 +15,9 @@ else
 {
   <h1 style="text-align: center">@(!Model.SearchString.Equals("") ? "No students Match search" : "There are no registered students")</h1>
 }
+  
+<div page-model="@Model.PagingInfo" page-action="List" search-string="@Model.SearchString"
+     page-classes-enabled="true"
+     page-class="btn" page-class-normal="btn-outline-dark"
+     page-class-selected="btn-primary" class="btn-group pull-right m-1">
+</div>
