@@ -57,7 +57,7 @@ jobs:
           images: ${{ env.IMAGE_PREFIX }}/${{env.IMAGE_NAME}}
 
       - name: Echo extracted data
-        run: echo ${{ steps.meta.outputs.tags }}
+        run: echo "${{ steps.meta.outputs.tags }}"
 
       - name: Build and push
         uses: docker/build-push-action@v5
