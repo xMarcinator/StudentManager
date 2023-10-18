@@ -47,12 +47,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           tags: |
+            type=raw,Latest
             type=schedule
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=ref,event=branch
-            type=ref,event=pr
             type=sha
           images: ${{ env.IMAGE_PREFIX }}/${{env.IMAGE_NAME}}
 
