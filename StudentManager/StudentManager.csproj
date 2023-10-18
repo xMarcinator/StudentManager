@@ -66,6 +66,20 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+      <Content Include=".config\ClusterRole.yaml" />
+      <Content Include=".config\DatabaseDeployment.yaml" />
+      <Content Include=".config\Deployment.yaml" />
+      <Content Include=".config\Ingress.yaml" />
+      <Content Include=".config\Service.yaml" />
+    </ItemGroup>
+
+
+
+
+
+
+    <ItemGroup>
+      <None Include=".config\StudentManagerPOD.yaml" />
     </ItemGroup>
 
 </Project>

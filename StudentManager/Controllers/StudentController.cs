@@ -71,6 +71,7 @@ public class StudentController : Controller
     private int PageSize = 4;
     public IActionResult List(string? searchString,int? productPage)
     {
+        Console.WriteLine("request received");
         return View(GetStudentList(searchString, productPage ?? 1));
     }
     

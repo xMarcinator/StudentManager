@@ -1,0 +1,38 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-manager-deployment
+  labels:
+    app: student-manager
+  namespace: student-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-manager-web
+  template:
+    metadata:
+      name: student-manager-webservice
+      labels:
+        app: student-manager-web
+    spec:
+      containers:
+        - name: student-manager-web
+          image: marcinator/student-manager:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DBSTRING
+              value : "Server=$(mssql_SERVICE_HOST);TrustServerCertificate=true"
+            - name :  DBNAME
+              value : "StudentManager" 
+            - name : DBUSER
+              value : "sa"
+            - name: DBPASS
+              valueFrom:
+                secretKeyRef:
+                  name: mssql
+                  key: MSSQL_SA_PASSWORD
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: github-container-registry
+      
