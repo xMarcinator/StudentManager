@@ -82,6 +82,8 @@ jobs:
           k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
       - name: Checkout source code
         uses: actions/checkout@v3
+      - name : test
+        run : echo hello
 
       #- name: Deploy to the Kubernetes cluster
       #  uses: azure/k8s-deploy@v1
