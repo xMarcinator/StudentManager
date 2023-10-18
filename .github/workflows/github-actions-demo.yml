@@ -22,8 +22,6 @@ jobs:
       # You can test your matrix by printing the current dotnet version
       - name: Display dotnet version
         run: dotnet --version
-      - name: Login to DockerHub Registry
-        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Test the project before packing
         run: dotnet test StudentManagerTest 
       #- name: build docker image
@@ -33,7 +31,7 @@ jobs:
         
   Build:
     runs-on: ubuntu-latest
-    needs: test
+    needs: Test
 
     steps:
       - uses: actions/checkout@v4
