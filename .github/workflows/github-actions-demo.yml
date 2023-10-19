@@ -99,3 +99,4 @@ jobs:
             StudentManager/.config/WebDeployment.yaml
           images: |
             ${{ env.IMAGE_FULL }}:${{ github.sha }}
+          skip-tls-verify: true
