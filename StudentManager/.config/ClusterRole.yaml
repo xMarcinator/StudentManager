@@ -15,7 +15,7 @@ rules:
       - ingresses
       - services
       - secrets
-      - PersistentVolumeClaim
+      - persistentvolumeclaims
     verbs:
       - create
       - delete
