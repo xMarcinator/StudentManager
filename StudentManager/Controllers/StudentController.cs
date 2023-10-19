@@ -9,15 +9,13 @@ namespace StudentManager.Controllers;
 
 public class StudentController : Controller
 {
-    private readonly IModelRepository<Education> _repoEdu;
     private readonly IModelRepository<Student> _repoStudent;
 
     private int PageSize = 4;
 
-    public StudentController(IModelRepository<Student> repoStudent, IModelRepository<Education> eduRepo)
+    public StudentController(IModelRepository<Student> repoStudent)
     {
         _repoStudent = repoStudent;
-        _repoEdu = eduRepo;
     }
 
     public StudentVM GetStudentList(string? searchString, int productPage = 1)
@@ -116,10 +114,7 @@ public class StudentController : Controller
         if (id.HasValue)
         {
             model = _repoStudent.Models
-                .Where(model => model.Id == id)
-                .Include(o => o.Class)
-                .ThenInclude(o => o.Education)
-                .FirstOrDefault();
+                .FirstOrDefault(student => student.Id == id);
         }
 
         model ??= new Student();

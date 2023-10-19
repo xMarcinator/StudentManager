@@ -10,7 +10,7 @@
 }
 
 @{
-	var educations = RepoEdu.Models.Include((Model) => Model.Classes);
+	var educations = RepoEdu.Models.Include((edu) => edu.Classes);
 }
 
 <div class="card">
