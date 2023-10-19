@@ -1,47 +1,57 @@
-@model StudentEditVM
+@using Microsoft.EntityFrameworkCore
+@using StudentManager.Models.DBUtils
+@model Student
+@inject IModelRepository<Education> RepoEdu
+
 
 @{
-	ViewBag.Title = Model.student.FirstName ?? "New Student";
+	ViewBag.Title = Model.FirstName ?? "New Student";
 	Layout = "_Layout";
+}
+
+@{
+	var educations = RepoEdu.Models.Include((Model) => Model.Classes);
 }
 
 <div class="card">
 	<div class="card-body">
 		<div id="ProfileIcon" class="col-md-auto position-relative" style="height: calc(10rem + 2rem)">
-			<img src="~/img/@(Model.student.ProfilePicture ?? "DefaultProfile.png")" class="position-absolute top-50 start-50 translate-middle" style="height: 10rem; width: 10rem;" alt="Student profile picture"/>
+			<img src="~/img/@(Model.ProfilePicture ?? "DefaultProfile.png")" class="position-absolute top-50 start-50 translate-middle" style="height: 10rem; width: 10rem;" alt="Student profile picture"/>
 		</div>
 
 		<form asp-controller="Student" method="post" asp-action="Edit">
-			<input asp-for="student.Id" style="display: none">
+			<input asp-for="Id" style="display: none">
 
 			<div class="mb-3 row">
 				<div class="col-6">
-					<label asp-for="student.FirstName" class="form-label">First Name</label>
-					<input asp-for="student.FirstName" class="form-control" placeholder="Name">
-					<span asp-validation-for="student.FirstName" class="invalid-feedback"></span>
+					<label asp-for="FirstName" class="form-label">First Name</label>
+					<input asp-for="FirstName" class="form-control" placeholder="Name">
+					<span asp-validation-for="FirstName" class="invalid-feedback"></span>
 				</div>
 				<div class="col-6">
-					<label asp-for="student.LastName" class="form-label">Last Name</label>
-					<input asp-for="student.LastName" class="form-control" placeholder="Name">
-					<span asp-validation-for="student.LastName" class="invalid-feedback"></span>
+					<label asp-for="LastName" class="form-label">Last Name</label>
+					<input asp-for="LastName" class="form-control" placeholder="Name">
+					<span asp-validation-for="LastName" class="invalid-feedback"></span>
 				</div>
 			</div>
 
 			<div class="mb-3">
-				<label asp-for="student.Email" class="form-label">Email</label>
-				<input asp-for="student.Email" class="form-control" placeholder="Email">
-				<span asp-validation-for="student.Email" class="invalid-feedback"></span>
+				<label asp-for="Email" class="form-label">Email</label>
+				<input asp-for="Email" class="form-control" placeholder="Email">
+				<span asp-validation-for="Email" class="invalid-feedback"></span>
 			</div>
 
 			<div class="mb-3 row">
 				<div class="col-6">
-					<label for="Education"  class="form-label">Education</label>
-					<select id="Education"  class="form-select">
+					<label for="Education" class="form-label">Education</label>
+					<select id="Education" class="form-select">
 						<option value="@null" disabled>No education</option>
 						@{
-							foreach (var edu in Model.possibleEducations)
+							if (Model.ClassId == 0) return;
+
+							foreach (var edu in educations)
 							{
-								if ( Model.student.Class.Id != 0 && Equals(edu.Id, Model.student.Class.Education.Id))
+								if (edu.Classes.Any((model => Equals(model.Id, Model.ClassId))))
 								{
 									<option value="@edu.Id" selected> @edu.Name</option>
 								}
@@ -54,17 +64,19 @@
 					</select>
 				</div>
 				<div class="col-6">
-					<label asp-for="student.ClassId" class="form-label">Class</label>
-					<select asp-for="student.ClassId" class="form-select">
+					<label asp-for="ClassId" class="form-label">Class</label>
+					<select asp-for="ClassId" class="form-select">
 						<option value="@null" disabled>No Class</option>
 						@{
-							var classes = Model.possibleEducations.SingleOrDefault((v)=>Equals(v.Id, Model.student.Class.Education.Id))?.Classes;
+							if (Model.ClassId == 0) return;
 
-							if (classes == null) return;
+
+							var classes = educations
+								.Where((model => model.Classes.Any((cla) => Equals(cla.Id, Model.ClassId))));
 
 							foreach (var edu in classes)
 							{
-								if (Equals(edu.Id, Model.student.Class.Id))
+								if (Equals(edu.Id, Model.Class?.Id))
 								{
 									<option value="@edu.Id" selected> @edu.Name</option>
 								}
@@ -81,17 +93,17 @@
 
 			<div class="mb-3">
 				<label for="Semester" class="form-label">Semester</label>
-				<input id="Semester" class="form-control" value="@Model.student.Class.Semester">
+				<input id="Semester" class="form-control disabled" value="@Model.Class.Semester">
 			</div>
 			@{
-				if (Model.student.Id == 0)
+				if (Model.Id == 0)
 				{
 					@Html.ActionLink("Cancel", "List", "Student", null, new { @class = "btn btn-danger" })
 					<button type="submit" class="btn btn-success">Save</button>
 				}
 				else
 				{
-					@Html.ActionLink("Delete", "Delete", "Student", new { id = Model.student.Id }, new { @class = "btn btn-danger" })
+					@Html.ActionLink("Delete", "Delete", "Student", new { id = Model.Id }, new { @class = "btn btn-danger" })
 					<button type="submit" class="btn btn-success">Update</button>
 				}
 			}

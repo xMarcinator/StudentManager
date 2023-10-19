@@ -9,16 +9,18 @@ namespace StudentManager.Controllers;
 
 public class StudentController : Controller
 {
-    private readonly IModelRepository<Student> _repoStudent;
     private readonly IModelRepository<Education> _repoEdu;
-    
-    public StudentController(IModelRepository<Student> repoStudent,IModelRepository<Education> eduRepo)
+    private readonly IModelRepository<Student> _repoStudent;
+
+    private int PageSize = 4;
+
+    public StudentController(IModelRepository<Student> repoStudent, IModelRepository<Education> eduRepo)
     {
         _repoStudent = repoStudent;
         _repoEdu = eduRepo;
     }
-    
-    public StudentVM GetStudentList(string? searchString,int productPage = 1)
+
+    public StudentVM GetStudentList(string? searchString, int productPage = 1)
     {
         var paging = new PagingInfo
         {
@@ -26,61 +28,50 @@ public class StudentController : Controller
             ItemsPerPage = PageSize,
             TotalItems = searchString != null ? 0 : _repoStudent.Models.Count()
         };
-        
-        var students = (IQueryable<Student>) _repoStudent.Models
-            .Include(o=>o.Class)
-            .ThenInclude(o=>o.Education);
-        
+
+        var students = (IQueryable<Student>)_repoStudent.Models
+            .Include(o => o.Class)
+            .ThenInclude(o => o.Education);
+
         if (!string.IsNullOrEmpty(searchString))
         {
             students = students.Where(s => s.FirstName.ToLower().Contains(searchString.ToLower())
                                            || s.LastName.ToLower().Contains(searchString.ToLower()));
-            
+
             paging.TotalItems = students.Count();
         }
-        
-        students =  students.OrderBy(p => p.Id)
+
+        students = students.OrderBy(p => p.Id)
             .Skip((productPage - 1) * PageSize)
             .Take(PageSize);
-        
+
 
         if (paging.CurrentPage > paging.TotalPages)
         {
             paging.CurrentPage = 1;
         }
-        
+
         var studentVm = new StudentVM
         {
             Students = students,
             SearchString = searchString,
             PagingInfo = paging
         };
-        
+
         return studentVm;
     }
-    
-    public class PagingInfo
-    {
-        public int CurrentPage { get; set; }
-        public int ItemsPerPage { get; set; }
-        public int TotalItems { get; set; }
-        // ReSharper disable once PossibleLossOfFraction
-        public int TotalPages => (int)(Math.Ceiling((double)TotalItems / ItemsPerPage));
-    }
 
-    private int PageSize = 4;
-    public IActionResult List(string? searchString,int? productPage)
+    public IActionResult List(string? searchString, int? productPage)
     {
         Console.WriteLine("request received");
         return View(GetStudentList(searchString, productPage ?? 1));
     }
-    
-    public PartialViewResult GetPartialStudentList(string? searchString,int? productPage)
-    {
 
+    public PartialViewResult GetPartialStudentList(string? searchString, int? productPage)
+    {
         var VM = GetStudentList(searchString, productPage ?? 1);
         Response.Headers.Add("X-Total-Count", VM.PagingInfo.TotalItems.ToString());
-        
+
         return PartialView("StudentListPartial", VM);
     }
 
@@ -91,29 +82,29 @@ public class StudentController : Controller
         var newStudent = new Student();
 
         //_repo.Insert(newStudent);
-        
-        return RedirectToAction("Edit", new {model = newStudent});
+
+        return RedirectToAction("Edit", new { model = newStudent });
     }
-    
+
     [HttpGet]
     public RedirectToActionResult Save(Student model)
     {
         if (!ModelState.IsValid)
             return RedirectToAction("Edit", model);
-        
+
         if (_repoStudent.Models.SingleOrDefault(b => b.Id == model.Id).IsNotNull(out var dbModel))
             _repoStudent.Update(model);
         else
             _repoStudent.Insert(model);
-        
+
         return RedirectToAction("List");
     }
-    
-    
+
+
     public RedirectToActionResult Delete(Student model)
     {
         _repoStudent.Delete(model);
-        
+
         return RedirectToAction("List");
     }
 
@@ -128,39 +119,38 @@ public class StudentController : Controller
                 .Where(model => model.Id == id)
                 .Include(o => o.Class)
                 .ThenInclude(o => o.Education)
-                .Include(o => o.Class)
-                .ThenInclude(o => o.ClassCourses)
                 .FirstOrDefault();
         }
 
         model ??= new Student();
-           
 
-        var editVM = new StudentEditVM()
-        {
-            student = model,
-            possibleEducations = _repoEdu.Models.Include(o => o.Courses)
-        };
-        
-        return View(editVM);
+        return View(model);
     }
-    
+
     [HttpPost]
-    public IActionResult Edit(StudentEditVM model)
+    public IActionResult Edit(Student student)
     {
         if (!ModelState.IsValid)
         {
-            model.possibleEducations = _repoEdu.Models.Include(o => o.Courses);
-                    
-            return View(model);
+            return View(student);
         }
-           
-        
-        if (model.student.Id != 0)
-            _repoStudent.Update(model.student);
+
+
+        if (student.Id != 0)
+            _repoStudent.Update(student);
         else
-            _repoStudent.Insert(model.student);
-        
+            _repoStudent.Insert(student);
+
         return RedirectToAction("List");
+    }
+
+    public class PagingInfo
+    {
+        public int CurrentPage { get; set; }
+        public int ItemsPerPage { get; set; }
+        public int TotalItems { get; set; }
+
+        // ReSharper disable once PossibleLossOfFraction
+        public int TotalPages => (int)(Math.Ceiling((double)TotalItems / ItemsPerPage));
     }
 }

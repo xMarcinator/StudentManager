@@ -1,18 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using StudentManager.Utils;
 
 namespace StudentManager.Models;
 
 public class Student
 {
-    [Key]
-    public int Id { get; set; }
+    [Key] public int Id { get; set; }
+
     public string? ProfilePicture { get; set; }
 
     [Required(ErrorMessage = "Please specify a first name")]
     public string FirstName { get; set; }
-    
+
     [Required(ErrorMessage = "Please specify a last name")]
     public string LastName { get; set; }
 
@@ -20,9 +19,9 @@ public class Student
     [EmailAddress(ErrorMessage = "Please enter a valid email address")]
     [Column(TypeName = "nvarchar(255)")]
     public string Email { get; set; }
-    
+
     public int ClassId { get; set; }
-    public ClassModel Class { get; set; } = new();
-    
+    public ClassModel? Class { get; set; }
+
     public List<Course> ExplicitCourses { get; set; } = new();
 }
