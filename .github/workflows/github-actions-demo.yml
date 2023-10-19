@@ -98,4 +98,4 @@ jobs:
             StudentManager/.config/DatabaseDeployment.yaml
             StudentManager/.config/WebDeployment.yaml
           images: |
-            ${{ IMAGE_FULL }}:${{ github.sha }}
+            ${{ env.IMAGE_FULL }}:${{ github.sha }}
