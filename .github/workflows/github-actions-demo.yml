@@ -12,8 +12,7 @@ on:
 env:
   IMAGE_NAME: "student-manager"
   IMAGE_PREFIX: "marcinator"
-  IMAGE_FULL: ${{ env.IMAGE_PREFIX }}/${{env.IMAGE_NAME}}
-
+  IMAGE_FULL: "marcinator/student-manager"
 
 jobs:
   Test:
