@@ -1,0 +1,80 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: student-manager-webservice
+spec:
+  selector:
+    app: student-manager-web
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 443
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-manager-deployment
+  labels:
+    app: student-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-manager-web
+  template:
+    metadata:
+      name: student-manager-web
+      labels:
+        app: student-manager-web
+    spec:
+      containers:
+        - name: student-manager-web
+          image: marcinator/student-manager:latest
+          imagePullPolicy: Always
+          env:
+            - name: DBSTRING
+              value: "Server=mssql-service,31433;TrustServerCertificate=true;Database=StudentManager;User Id=sa;"
+            - name: DBPASS
+              valueFrom:
+                secretKeyRef:
+                  name: mssql
+                  key: MSSQL_SA_PASSWORD
+          ports:
+            - containerPort: 80
+              name: web
+            - containerPort: 443
+              name: web-secure
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: github-container-registry
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/issuer: prod-issuer
+    cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
+    cert-manager.io/issuer-kind: OriginIssuer
+  name: student-manager-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: student.marcinator.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: student-manager-webservice
+                port:
+                  name: http
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - student.marcinator.com
+      secretName: student-marcinator-tls

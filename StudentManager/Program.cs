@@ -1,8 +1,5 @@
-using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
 using StudentManager.Models;
 using StudentManager.Models.DBUtils;
-using StudentManager.Utils;
 
 DotNetEnv.Env.TraversePath().Load();
 
@@ -29,6 +26,8 @@ if (!app.Environment.IsDevelopment())
 
 SeedDb.EnsurePopulated(app);
 
+Console.WriteLine("populated database");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -43,4 +42,6 @@ app.MapControllerRoute(
 
 app.Run();
 
-public partial class Program { }
+public partial class Program
+{
+}
