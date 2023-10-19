@@ -79,7 +79,7 @@ jobs:
 
   Deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     needs: [Test,Build]
     steps:
       - name: Set the Kubernetes context
