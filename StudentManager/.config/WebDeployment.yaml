@@ -38,7 +38,11 @@ spec:
           imagePullPolicy: Always
           env:
             - name: DBSTRING
-              value: "Server=mssql-service,31433;TrustServerCertificate=true;Database=StudentManager;User Id=sa;"
+              value: "Server=mssql-service,31433;TrustServerCertificate=true;"
+            - name: DBNAME
+              value: "StudentManager"
+            - name: DBUSER
+              value: "sa"
             - name: DBPASS
               valueFrom:
                 secretKeyRef:
