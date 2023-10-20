@@ -79,7 +79,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-arg: |
+          build-args: |
             "COMMIT_SHA_ARG=${{ steps.vars.outputs.sha_short }}"
 
 
