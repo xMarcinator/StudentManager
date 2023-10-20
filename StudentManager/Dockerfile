@@ -1,4 +1,5 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿ARG COMMIT_SHA_ARG=""
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -17,4 +18,7 @@ RUN dotnet publish "StudentManager.csproj" -c Release -o /app/publish /p:UseAppH
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# use the value to set the ENV var default
+ARG COMMIT_SHA_ARG
+ENV COMMIT_SHA=$COMMIT_SHA_ARG
 ENTRYPOINT ["dotnet", "StudentManager.dll"]

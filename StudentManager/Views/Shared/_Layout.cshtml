@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Reflection
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="utf-8"/>
@@ -49,7 +50,16 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2023 - StudentManager
+        @{
+            var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+            // ReSharper disable once RedundantAssignment
+            var sha = Environment.GetEnvironmentVariable("COMMIT_SHA");
+            
+            #if DEBUG
+            sha = "Dev Build";
+            #endif
+        }
+        &copy; @DateTime.Today.Year - StudentManager (@version-@sha)
     </div>
 </footer>
 @await RenderSectionAsync("Scripts", required: false)
