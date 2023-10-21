@@ -17,16 +17,13 @@ env:
 jobs:
   Test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: ['7.0.x' ]
       
     steps:
       - uses: actions/checkout@v4
-      - name: Setup dotnet ${{ matrix.dotnet-version }}
+      - name: Setup dotnet '7.0.x'
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          dotnet-version: '7.0.x'
       # You can test your matrix by printing the current dotnet version
       - name: Display dotnet version
         run: dotnet --version
@@ -81,7 +78,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             "COMMIT_SHA_ARG=${{ steps.vars.outputs.sha_short }}"
-
 
   Deploy:
     runs-on: ubuntu-latest
