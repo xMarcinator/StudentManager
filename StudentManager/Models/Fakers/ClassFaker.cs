@@ -3,10 +3,7 @@
 namespace StudentManager.Models.Fakers;
 
 public sealed class ClassFaker : Faker<ClassModel>
-{
-    private static readonly string?[] Icons = new[] { "***REMOVED***", "***REMOVED***", null };
-
-
+{ 
     public ClassFaker(bool includeID = false)
     {
         RuleFor(o => o.Name, f => f.Name.JobArea());
