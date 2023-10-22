@@ -3,7 +3,7 @@ using Bogus;
 namespace StudentManager.Models.Fakers;
 
 public sealed class StudentFaker : Faker<Student> {
-    private static readonly string?[] Icons = { "***REMOVED***", "***REMOVED***", null };
+    private static readonly string?[] Icons = { null };
     
     public StudentFaker(bool includeId = false)
     {
