@@ -11,7 +11,7 @@ public sealed class CourseFaker : Faker<Course>
         
         if (IncludeID)
         { 
-            RuleFor(o => o.Id, f => f.IndexGlobal);
+            RuleFor(o => o.Id, f => f.IndexFaker);
         }
     }
 }

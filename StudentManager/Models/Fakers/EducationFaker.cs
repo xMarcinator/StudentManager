@@ -12,7 +12,7 @@ public sealed class EducationFaker : Faker<Education>
         
         if (includeId)
         { 
-            RuleFor(o => o.Id, f => f.IndexGlobal);
+            RuleFor(o => o.Id, f => f.IndexFaker);
         }
     }
 }
