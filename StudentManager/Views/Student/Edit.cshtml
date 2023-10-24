@@ -47,8 +47,6 @@
 					<select id="Education" class="form-select">
 						<option value="@null" disabled>No education</option>
 						@{
-							if (Model.ClassId == 0) return;
-
 							foreach (var edu in educations)
 							{
 								if (edu.Classes.Any((model => Equals(model.Id, Model.ClassId))))
@@ -69,10 +67,9 @@
 						<option value="@null" disabled>No Class</option>
 						@{
 							if (Model.ClassId == 0) return;
-
-
-							var classes = educations
-								.Where((model => model.Classes.Any((cla) => Equals(cla.Id, Model.ClassId))));
+							
+							var classes = educations.Where((edu) => edu.Classes.Any((cla) => Equals(cla.Id, Model.ClassId)))
+								.Select((edu => edu.Classes)).First();
 
 							foreach (var edu in classes)
 							{

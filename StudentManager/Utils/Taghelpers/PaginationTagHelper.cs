@@ -33,10 +33,8 @@ public class PaginationTagHelper : TagHelper {
             for (int i = 1; i <= PageModel.TotalPages; i++) {
                 TagBuilder tag = new TagBuilder("a");
                 
-                
-                
                 tag.Attributes["href"] = urlHelper.Action(PageAction,
-                new { productPage = i, searchString });
+                new { Page = i, searchString });
                 if (PageClassesEnabled) {
                     tag.AddCssClass(PageClass);
                     tag.AddCssClass(i == PageModel.CurrentPage

@@ -25,7 +25,7 @@ public class StudentControllerTest
         var controller = new StudentController(studentMock.Object);
 
         //execute
-        var model = (controller.Edit(dummyStudents[0].Id) as ViewResult)?.ViewData.Model as Student;
+        var model = (Student?) (controller.Edit(dummyStudents[0].Id) as ViewResult)?.ViewData.Model;
 
         //test
         Assert.NotNull(model);

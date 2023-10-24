@@ -18,59 +18,79 @@ public class StudentController : Controller
         _repoStudent = repoStudent;
     }
 
-    public StudentVM GetStudentList(string? searchString, int productPage = 1)
+
+    public class SearchParameters
+    {
+        public string? SearchString { get; set; }
+        public int Education { get; set; }
+        public int Page { get; set; } = 1;
+
+        public bool ParametersToBeApplied()
+        {
+            return !string.IsNullOrEmpty(SearchString) || (Education) != 0;
+        }
+    }
+    
+    public StudentVM GetStudentList(SearchParameters parameters)
     {
         var paging = new PagingInfo
         {
-            CurrentPage = productPage,
+            CurrentPage = parameters.Page,
             ItemsPerPage = PageSize,
-            TotalItems = searchString != null ? 0 : _repoStudent.Models.Count()
+            TotalItems = parameters.ParametersToBeApplied() ? 0 : _repoStudent.Models.Count()
         };
 
         var students = (IQueryable<Student>)_repoStudent.Models
             .Include(o => o.Class)
             .ThenInclude(o => o.Education);
 
-        if (!string.IsNullOrEmpty(searchString))
+        if (parameters.ParametersToBeApplied())
         {
-            students = students.Where(s => s.FirstName.ToLower().Contains(searchString.ToLower())
-                                           || s.LastName.ToLower().Contains(searchString.ToLower()));
-
+            if (!string.IsNullOrEmpty(parameters.SearchString))
+            {
+                students = students.Where(s => s.FirstName.ToLower().Contains(parameters.SearchString.ToLower())
+                                               || s.LastName.ToLower().Contains(parameters.SearchString.ToLower()));
+            }
+            
+            if (parameters.Education != 0)
+            {
+                students = students.Where(s => s.Class != null && Equals(s.Class.Education.Id,parameters.Education));
+            }
+            
             paging.TotalItems = students.Count();
         }
-
-        students = students.OrderBy(p => p.Id)
-            .Skip((productPage - 1) * PageSize)
-            .Take(PageSize);
-
-
+        
         if (paging.CurrentPage > paging.TotalPages)
-        {
             paging.CurrentPage = 1;
-        }
+        
+        students = students.OrderBy(p => p.Id)
+            .Skip((parameters.Page - 1) * PageSize)
+            .Take(PageSize);
+        
 
         var studentVm = new StudentVM
         {
             Students = students,
-            SearchString = searchString,
+            SearchString = parameters.SearchString,
+            Education = parameters.Education,
             PagingInfo = paging
         };
 
         return studentVm;
     }
 
-    public IActionResult List(string? searchString, int? productPage)
+    public IActionResult List(SearchParameters parameters)
     {
         Console.WriteLine("request received");
-        return View(GetStudentList(searchString, productPage ?? 1));
+        return View(GetStudentList(parameters));
     }
 
-    public PartialViewResult GetPartialStudentList(string? searchString, int? productPage)
+    public PartialViewResult GetPartialStudentList(SearchParameters parameters)
     {
-        var VM = GetStudentList(searchString, productPage ?? 1);
-        Response.Headers.Add("X-Total-Count", VM.PagingInfo.TotalItems.ToString());
+        var vm = GetStudentList(parameters);
+        Response.Headers.Add("X-Total-Count", vm.PagingInfo.TotalItems.ToString());
 
-        return PartialView("StudentListPartial", VM);
+        return PartialView("StudentListPartial", vm);
     }
 
 
