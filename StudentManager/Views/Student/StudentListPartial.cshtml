@@ -13,7 +13,7 @@
 }
 else
 {
-  <h1 style="text-align: center">@(!Model.SearchString.Equals("") ? "No students Match search" : "There are no registered students")</h1>
+  <h1 style="text-align: center">@(!Equals(Model.SearchString,"") ? "No students Match search" : "There are no registered students")</h1>
 }
   
 <div page-model="@Model.PagingInfo" page-action="List" search-string="@Model.SearchString"
