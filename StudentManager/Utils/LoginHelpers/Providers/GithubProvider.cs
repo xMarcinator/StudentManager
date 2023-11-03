@@ -104,7 +104,7 @@ public static class GithubProvider
     }
 
     private static string? URL;
-    public static string GetUrl(string returnUrl)
+    public static string GetUrl(string callbackUrl)
     {
         if (URL == null)
         {
@@ -119,6 +119,6 @@ public static class GithubProvider
             URL = QueryHelpers.AddQueryString(baseURL, param);
         }
         
-        return QueryHelpers.AddQueryString(URL, "redirect_uri", returnUrl);
+        return QueryHelpers.AddQueryString(URL, "redirect_uri", callbackUrl);
     }
 }

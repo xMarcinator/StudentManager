@@ -20,7 +20,7 @@ public class OAuthController : Controller
         if (returnUrl == null)
             returnUrl = "/";
         
-        string actionUrl = Url.ActionLink("GithubCallback", "OAuth", new { returnUrl })!;
+        string actionUrl = Url.ActionLink("GithubCallback", "OAuth", new { returnUrl },Request.Scheme)!;
         
         var url = GithubProvider.GetUrl(actionUrl);
         return Redirect(url);

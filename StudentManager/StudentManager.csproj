@@ -70,6 +70,7 @@
       </Content>
         <Content Include=".config\ClusterIssuer.yaml"/>
       <Content Include=".config\ClusterRole.yaml" />
+      <Content Include=".config\Https-Redirect.yaml" />
         <Content Include=".config\OldDatabaseDeployment.yaml"/>
         <Content Include=".config\ServiceAccountSecret.yaml"/>
         <Content Include=".config\WebDeployment.yaml"/>
