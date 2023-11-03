@@ -5,7 +5,7 @@ public interface IModelRepository<T>
     public bool AutoSave { get; set; }
     public IQueryable<T> Models { get; }
 
-    public void Insert(T model);
+    public T Insert(T model);
     public void Update(T model);
     public void Delete(T model);
 

@@ -15,11 +15,12 @@ public class Student
     [Required(ErrorMessage = "Please specify a last name")]
     public string LastName { get; set; }
 
-    [Required(ErrorMessage = "Email is required")]
+    [Required(ErrorMessage = "Please specify a Email")]
     [EmailAddress(ErrorMessage = "Please enter a valid email address")]
     [Column(TypeName = "nvarchar(255)")]
     public string Email { get; set; }
 
+    [Required(ErrorMessage = "Please specify a Class")]
     public int ClassId { get; set; }
     public ClassModel? Class { get; set; }
 

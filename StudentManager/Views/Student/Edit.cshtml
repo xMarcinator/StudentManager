@@ -44,53 +44,33 @@
 			<div class="mb-3 row">
 				<div class="col-6">
 					<label for="Education" class="form-label">Education</label>
-					<select id="Education" class="form-select">
-						<option value="@null" disabled>No education</option>
-						@{
-							foreach (var edu in educations)
-							{
-								if (edu.Classes.Any((model => Equals(model.Id, Model.ClassId))))
-								{
-									<option value="@edu.Id" selected> @edu.Name</option>
-								}
-								else
-								{
-									<option value="@edu.Id"> @edu.Name</option>
-								}
-							}
-						}
+					
+					@{
+						var Educations = educations.Select(edu => new { edu.Id, edu.Name })
+							.ToList()
+							.Select(e => (e.Id, (object)e.Name));
+					}
+					
+					<select id="Education" class="form-select" initial-data="Educations" initially-selected="Model.Class?.EducationId" >
 					</select>
 				</div>
 				<div class="col-6">
 					<label asp-for="ClassId" class="form-label">Class</label>
-					<select asp-for="ClassId" class="form-select">
-						<option value="@null" disabled>No Class</option>
-						@{
-							if (Model.ClassId == 0) return;
-							
-							var classes = educations.Where((edu) => edu.Classes.Any((cla) => Equals(cla.Id, Model.ClassId)))
-								.Select((edu => edu.Classes)).First();
-
-							foreach (var edu in classes)
-							{
-								if (Equals(edu.Id, Model.Class?.Id))
-								{
-									<option value="@edu.Id" selected> @edu.Name</option>
-								}
-								else
-								{
-									<option value="@edu.Id"> @edu.Name</option>
-								}
-							}
-						}
+					@{
+						var initialData =  Model.ClassId == 0 ? null 
+							: educations.Where((edu) => edu.Classes.Any((cla) => Equals(cla.Id, Model.ClassId)))
+							  .Select((edu => edu.Classes)).FirstOrDefault()?.Select((e)=>(e.Id, (object) e.Name));
+					}
+					<select asp-for="ClassId" filler-controller="Class" filler-action="Select" input-target="Education" endpoint-parameter="educationID" initial-data="initialData" initially-selected="Model.ClassId" class="form-select">
 					</select>
+					<span asp-validation-for="ClassId" class="invalid-feedback"></span>
 				</div>
 
 			</div>
 
 			<div class="mb-3">
 				<label for="Semester" class="form-label">Semester</label>
-				<input id="Semester" class="form-control disabled" value="@Model.Class.Semester">
+				<input id="Semester" class="form-control" disabled type="number" value="@(Model.Class?.Semester.ToString() ?? "Not assigned class")">
 			</div>
 			@{
 				if (Model.Id == 0)
@@ -109,5 +89,6 @@
 </div>
 
 @section Scripts {
+	<script defer src="~/js/SelectFiller.js"></script>
 	@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using StudentManager.Models;
 using StudentManager.Models.DBUtils;
 
@@ -6,12 +7,33 @@ DotNetEnv.Env.TraversePath().Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()    
+    .AddRazorOptions(options =>
+{
+    options.ViewLocationFormats.Add("/{0}.cshtml");
+});;
 
 builder.Services.AddDbContext<StudentManagementDb>();
 
 builder.Services.AddScoped<IModelRepository<Student>, EFStudentRepository>();
 builder.Services.AddScoped<IModelRepository<Education>, EFEducationRepository>();
+builder.Services.AddScoped<IModelRepository<ClassModel>, EFClassRepository>();
+builder.Services.AddScoped<IModelRepository<Course>, EFCourseRepository>();
+
+builder.Services.AddDbContext<AppIdentityDbContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppIdentityDbContext>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("TrialOnly", policy =>
+    {
+        policy.RequireClaim("Trial");
+    });
+    options.AddPolicy ("AdminOnly", policy => {
+        policy.RequireRole ("Admin");
+    });
+});
 
 var app = builder.Build();
 
@@ -25,8 +47,7 @@ if (!app.Environment.IsDevelopment())
 
 
 SeedDb.EnsurePopulated(app);
-
-Console.WriteLine("populated database");
+IdentitySeedData.EnsurePopulated(app);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -35,6 +56,9 @@ app.UseRouting();
 
 
 //app.UseAuthorization();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

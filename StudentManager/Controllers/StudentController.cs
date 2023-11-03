@@ -22,14 +22,16 @@ public class StudentController : Controller
     public class SearchParameters
     {
         public string? SearchString { get; set; }
-        public int Education { get; set; }
+        public int? EducationID { get; set; }
+        
+        public int? classID { get; set; }
         public int Page { get; set; } = 1;
 
         public bool ParametersToBeApplied()
         {
-            return !string.IsNullOrEmpty(SearchString) || (Education) != 0;
+            return !string.IsNullOrEmpty(SearchString) || (EducationID ?? classID) != null;
         }
-    }
+    }   
     
     public StudentVM GetStudentList(SearchParameters parameters)
     {
@@ -52,9 +54,14 @@ public class StudentController : Controller
                                                || s.LastName.ToLower().Contains(parameters.SearchString.ToLower()));
             }
             
-            if (parameters.Education != 0)
+            if (parameters.classID != null)
             {
-                students = students.Where(s => s.Class != null && Equals(s.Class.Education.Id,parameters.Education));
+                students = students.Where(s => Equals(s.ClassId,parameters.classID));
+            }
+            
+            if (parameters.EducationID != null)
+            {
+                students = students.Where(s => s.Class != null && Equals(s.Class.Education.Id,parameters.EducationID));
             }
             
             paging.TotalItems = students.Count();
@@ -72,7 +79,8 @@ public class StudentController : Controller
         {
             Students = students,
             SearchString = parameters.SearchString,
-            Education = parameters.Education,
+            EducationID = parameters.EducationID,
+            ClassID = parameters.classID,
             PagingInfo = paging
         };
 
@@ -133,7 +141,7 @@ public class StudentController : Controller
 
         if (id.HasValue)
         {
-            model = _repoStudent.Models
+            model = _repoStudent.Models.Include(e=>e.Class)
                 .FirstOrDefault(student => student.Id == id);
         }
 

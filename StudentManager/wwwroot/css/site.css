@@ -21,10 +21,6 @@ html {
   min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
-}
-
 .student-container {
     position: relative;
     text-overflow: ellipsis;
@@ -80,12 +76,17 @@ body {
     margin: 1rem;
 }
 
-.navbar {
-    height: 4rem;
-}
-
 #SearchForm #SearchIconContainer{
     display: inline-block;
     height: 3rem;
     width: 3rem;
+}
+
+.h-custom {
+    height: calc(100% - 72px);
+}
+@media (max-width: 450px) {
+    .h-custom {
+        height: 100%;
+    }
 }

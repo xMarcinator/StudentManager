@@ -1,0 +1,40 @@
+﻿@using StudentManager.Components
+@model StudentManager.Components.filterData[]
+<div class="card">
+	<h5 class="card-header">Filters</h5>
+	<div class="card-body">
+		<form asp-action="List" asp-controller="Student" method="get">
+			<div class="row g-3 align-items-center">
+				@foreach (filterData modelFilter in Model)
+				{
+					<div class="col-auto">
+						<div class="form-floating">
+							<select name="@modelFilter.routeValueName" class="form-select" id="floatingSelect" aria-label="Floating label select example">
+								<option value="@null">All</option>
+								@foreach (var options in modelFilter.options)
+								{
+									if (options.Value.Item2)
+									{
+										<option value="@options.Key" selected>@options.Value.Item1</option>
+									}
+									else
+									{
+										<option value="@options.Key">@options.Value.Item1</option>
+									}
+								}
+							</select>
+							<label for="floatingSelect">@modelFilter.ValueName</label>
+						</div>
+					</div>
+				}
+				
+			</div>
+			<br/>
+			<div class="row g-3">
+				<div class="col-12">
+					<button type="submit" class="btn btn-success w-100">apply</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

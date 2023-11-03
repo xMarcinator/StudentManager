@@ -1,32 +1,56 @@
+@using StudentManager.Models.DBUtils
+@using Microsoft.EntityFrameworkCore
+@using StudentManager.Components
 @model StudentVM
+@inject IModelRepository<Education> RepoEdu
+@inject IModelRepository<ClassModel> Repoclass
 
 @{
-    ViewBag.Title = "Student List";
-    Layout = "_Layout";
+	ViewBag.Title = "Student List";
+	Layout = "_Layout";
 }
 
 <h1>Students (<span id="StudentCount">@Model.PagingInfo.TotalItems</span>)</h1>
 <p style="color: darkgray">All registered students are listed here</p>
 
+@{
+	var educations = RepoEdu.Models.Include((edu) => edu.Classes);
+}
 
-<div class="d-flex justify-content-between">
-  <form id="SearchForm" class="d-flex align-content-center" style="border: 2px solid var(--bs-primary); border-radius: 5px;">
-    <div id="SearchIconContainer" class="d-flex align-items-center justify-content-around">
-      <i class="fa-solid fa-magnifying-glass" style="padding: 10px;"></i>
-    </div>
-    <input asp-for="SearchString" style="outline: none;border: 0; background-color: var(--bs-body-bg); border-radius: 5px;">
-  </form>
-  <a asp-action="Edit" asp-controller="Student" class="btn btn-primary">Create Student</a>
+<div class="d-flex gap-1">
+	<form id="SearchForm" class="d-flex align-content-center position-relative" style="border: 2px solid var(--bs-primary); border-radius: 5px;">
+		<div id="SearchIconContainer" class="d-flex align-items-center justify-content-around">
+			<i class="fa-solid fa-magnifying-glass" style="padding: 10px;"></i>
+		</div>
+		<input asp-for="SearchString" style="outline: none;border: 0; background-color: var(--bs-body-bg); border-radius: 5px;">
+		<i class="fa-solid fa-sliders position-absolute top-50 end-0 translate-middle-y" style="margin-right: 1rem" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="false" aria-controls="filters"></i>
+        	
+	</form>
+	<a asp-action="Edit" asp-controller="Student" class="btn btn-primary float-end align-items-center">Create Student</a>
 </div>
 <br/>
 
-<div id="ListContainer">
-   <partial name="StudentListPartial" model="@Model"/>
+<div id="filters" class="collapse">
+	@{
+		var educationFilter = filterData.fromModels("EducationID", "Education",Model.ClassID,
+			RepoEdu.Models,(model)=>(model.Id,model.Name));
+		var classFilter = filterData.fromModels("classID","Class",Model.ClassID,
+			Repoclass.Models,(model)=>(model.Id,model.Name),educationFilter);
+	}
+	@await Component.InvokeAsync("Filter",new[] { educationFilter,classFilter })
 </div>
+
+<br/>
+
+<div id="ListContainer">
+	<partial name="StudentListPartial" model="@Model"/>
+</div>
+
 
 @section Scripts
 {
-    <script type="text/javascript">
+	<script defer src="~/js/SelectFiller.js"></script>
+	<script type="text/javascript">
         let callbackID = 0;
         function debounce(callback, delay = 500){
             clearTimeout(callbackID);

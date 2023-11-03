@@ -41,6 +41,8 @@ spec:
               value: "Server=mssql-service,31433;TrustServerCertificate=true;"
             - name: DBNAME
               value: "StudentManager"
+            - name: IDENTITYDBNAME
+              value: "Identity"
             - name: DBUSER
               value: "sa"
             - name: DBPASS
@@ -48,6 +50,16 @@ spec:
                 secretKeyRef:
                   name: mssql
                   key: MSSQL_SA_PASSWORD
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: github-secrets
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: github-secrets
+                  key: GITHUB_CLIENT_SECRET
           ports:
             - containerPort: 80
               name: web

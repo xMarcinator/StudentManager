@@ -16,11 +16,13 @@ public abstract class EFBaseRepository<T>: IModelRepository<T> where T : class
 
     public bool AutoSave { get; set; } = true;
     public IQueryable<T> Models => TargetDbSet;
-    public void Insert(T model)
+    public T Insert(T model)
     {
         TargetDbSet.Add(model);
         
         if (AutoSave) SaveChanges();
+        
+        return model;
     }
 
     public void Update(T model)

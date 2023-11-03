@@ -16,8 +16,11 @@ else
   <h1 style="text-align: center">@(!Equals(Model.SearchString,"") ? "No students Match search" : "There are no registered students")</h1>
 }
   
-<div page-model="@Model.PagingInfo" page-action="List" search-string="@Model.SearchString"
+<div page-model="@Model.PagingInfo" page-action="List"
      page-classes-enabled="true"
-     page-class="btn" page-class-normal="btn-outline-dark"
-     page-class-selected="btn-primary" class="btn-group pull-right m-1">
+     page-class="btn" page-class-normal="btn-outline-secondary"
+     page-class-selected="btn-primary" class="btn-group pull-right m-1"
+     page-url-searchString="@Model.SearchString"
+     page-url-classID="@Model.ClassID"
+     page-url-EducationID="@Model.EducationID">
 </div>
