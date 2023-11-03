@@ -21,24 +21,6 @@
 <main role="main" class="pb-3">
     @RenderBody()
 </main>
-
-
-<footer class="border-top footer text-muted">
-    <div class="container">
-        @{
-            var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
-            // ReSharper disable once RedundantAssignment
-            var sha = Environment.GetEnvironmentVariable("COMMIT_SHA");
-            
-            #if DEBUG
-            sha = "Dev Build";
-            #endif
-        }
-        &copy; @DateTime.Today.Year - StudentManager (@version-@sha)
-        
-        
-    </div>
-</footer>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

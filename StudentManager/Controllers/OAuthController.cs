@@ -48,6 +48,28 @@ public class OAuthController : Controller
         return await ExternalLogin(await GithubLogin.fromCode(code),returnUrl);
     }
     
+    public async Task<IActionResult> MicrosftCallback(string? code,string? returnUrl,GithubErrorType? error, string? error_description,string? error_uri) {
+        if (error != null)
+        {
+            switch (error)
+            {
+                case GithubErrorType.application_suspended:
+                    Console.WriteLine("application_suspended");
+                    break;
+                case GithubErrorType.redirect_uri_mismatch:
+                    Console.WriteLine("redirect_uri_mismatch");
+                    break;
+                case GithubErrorType.access_denied:
+                    Console.WriteLine("access_denied");
+                    break;
+            }
+            
+            return Redirect(Url.Action("Login", "Account",new { error = error_description }));
+        }
+        
+        return await ExternalLogin(await GithubLogin.fromCode(code),returnUrl);
+    }
+    
     private async Task<IActionResult> ExternalLogin(ExternalLogin<IdentityUser> provider,string returnUrl)
     {
         var userIndentity = await userManager.FindByLoginAsync(provider.Provider, provider.user.Id.ToString());
