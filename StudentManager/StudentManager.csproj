@@ -75,6 +75,9 @@
         <Content Include=".config\ServiceAccountSecret.yaml"/>
         <Content Include=".config\WebDeployment.yaml"/>
       <Content Include=".config\DatabaseDeployment.yaml" />
+      <Content Update="wwwroot\favicon.ico">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
