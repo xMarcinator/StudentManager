@@ -3,15 +3,20 @@ using StudentManager.Models.Json;
 
 namespace StudentManager.Utils.LoginHelpers.Providers;
 
-public static class GithubProvider
+public static class MicrosoftProvider
 {
-    public const string Provider = "hello";
+    public const string Provider = "Microsoft";
+    public const string scope = "read:user user:email";
+
     
     private static string ClientId =>
-        Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID") ?? throw new InvalidOperationException();
+        Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_ID") ?? throw new InvalidOperationException();
 
     private static string ClientSecret =>
-        Environment.GetEnvironmentVariable("GITHUB_CLIENT_SECRET") ?? throw new InvalidOperationException();
+        Environment.GetEnvironmentVariable("MICROSOFT_CLIENT_SECRET") ?? throw new InvalidOperationException();
+    
+    private static string Tenant =>
+        Environment.GetEnvironmentVariable("MICROSOFT_TENANT_ID") ?? throw new InvalidOperationException();
 
     private static HttpClient client = null;
     
@@ -27,31 +32,35 @@ public static class GithubProvider
         return client;
     }
     
-    public static async Task<GithubAccessToken> exchange_code(string code)
+    public static async Task<MicrosoftAccessToken> exchange_code(string code)
     {
         var client = clientI(); 
        
-        const string url = "https://github.com/login/oauth/access_token";
+        string url = $"https://login.microsoftonline.com/{Tenant}/oauth2/v2.0/token";
         Dictionary<string, string> param = new Dictionary<string, string>
         {
-            { "client_id", ClientId }, { "client_secret", ClientSecret }, { "code", code } , { "scope", "read:user user:email" }
+            { "client_id", ClientId }, 
+            { "client_secret", ClientSecret }, 
+            { "code", code } , 
+            { "scope", scope }
         };
         var newUrl = new Uri(QueryHelpers.AddQueryString(url, param));
+        
         var request = new HttpRequestMessage(HttpMethod.Post, newUrl.AbsoluteUri);
         
         var response = await client.SendAsync(request);
 
-        var result = await response.Content.ReadFromJsonAsync<GithubAccessToken>() 
+        var result = await response.Content.ReadFromJsonAsync<MicrosoftAccessToken>() 
                      ?? throw new InvalidOperationException();
         
         //Console.WriteLine(result);
         return result;
     }
     
-    public static async Task<GithubUser> getUserInfo(string oauthToken)
+    public static async Task<MicrosoftUser> getUserInfo(string oauthToken)
     {
         var client = clientI();
-        const string url = "https://api.github.com/user";
+        const string url = "https://graph.microsoft.com/v1.0/me";
         
         var newUrl = new Uri(url);
         var request = new HttpRequestMessage(HttpMethod.Get, newUrl.AbsoluteUri);
@@ -61,7 +70,7 @@ public static class GithubProvider
         
         var response = await client.SendAsync(request);
         
-        var result = await response.Content.ReadFromJsonAsync<GithubUser>();
+        var result = await response.Content.ReadFromJsonAsync<MicrosoftUser>();
         
         if (result == null) throw new InvalidOperationException();
         
@@ -111,10 +120,12 @@ public static class GithubProvider
             const string baseURL = "https://github.com/login/oauth/authorize";
             const string baseScopes = "read:user user:email";
 
-            Dictionary<string, string> param = new Dictionary<string, string>();
-            
-            param.Add("client_id",ClientId);
-            param.Add("scope",baseScopes);
+            Dictionary<string, string> param = new Dictionary<string, string>()
+            {
+                { "response_type", "authorization_code" },
+                { "client_id", ClientId },
+                { "scope", baseScopes },
+            };
             
             URL = QueryHelpers.AddQueryString(baseURL, param);
         }

@@ -67,7 +67,7 @@ public class OAuthController : Controller
             return Redirect(Url.Action("Login", "Account",new { error = error_description }));
         }
         
-        return await ExternalLogin(await GithubLogin.fromCode(code),returnUrl);
+        return await ExternalLogin(await MicrosoftLogin.fromCode(code),returnUrl);
     }
     
     private async Task<IActionResult> ExternalLogin(ExternalLogin<IdentityUser> provider,string returnUrl)

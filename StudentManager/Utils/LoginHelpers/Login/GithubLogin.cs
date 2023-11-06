@@ -20,7 +20,7 @@ public class GithubLogin : ExternalLogin<IdentityUser>
 
         if (user == null)
         {
-            var emails = await GithubProvider.getUserEmails(AccessToken.access_token);
+            var emails = await GithubProvider.getUserEmails(GithubAccessToken.access_token);
             
             IdentityUser foundUser = null;
             
@@ -46,7 +46,7 @@ public class GithubLogin : ExternalLogin<IdentityUser>
     }
     
     public GithubUser githubUser { get; set; }
-    public AccessToken AccessToken { get; set; }
+    public GithubAccessToken GithubAccessToken { get; set; }
 
     public static async Task<GithubLogin> fromCode(string code)
     {
@@ -56,7 +56,7 @@ public class GithubLogin : ExternalLogin<IdentityUser>
         return new GithubLogin()
         {
             githubUser = userInfo,
-            AccessToken = accessToken,
+            GithubAccessToken = accessToken,
             Provider = GithubProvider.Provider,
         };
     }
