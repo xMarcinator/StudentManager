@@ -76,8 +76,11 @@ metadata:
     cert-manager.io/issuer: prod-issuer
     cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
     cert-manager.io/issuer-kind: OriginIssuer
+    cert-manager.io/duration: 2160h0m0s
+    cert-manager.io/renew-before: 360h0m0s
     # MUST be <namespace>-<name>@kubernetescrd
     traefik.ingress.kubernetes.io/router.middlewares: default-redirect@kubernetescrd
+    
   name: student-manager-ingress
 spec:
   ingressClassName: traefik

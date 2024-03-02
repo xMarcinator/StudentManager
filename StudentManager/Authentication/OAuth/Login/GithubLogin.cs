@@ -20,7 +20,7 @@ public class GithubLogin : ExternalLogin<IdentityUser>
 
         if (user == null)
         {
-            var emails = await GithubProvider.getUserEmails(GithubAccessToken.access_token);
+            var emails = await GithubProvider.getUserEmails(GithubAccessToken.AccessToken);
             
             IdentityUser foundUser = null;
             
@@ -51,7 +51,7 @@ public class GithubLogin : ExternalLogin<IdentityUser>
     public static async Task<GithubLogin> fromCode(string code)
     {
         var accessToken = await GithubProvider.exchange_code(code);
-        var userInfo = await GithubProvider.getUserInfo(accessToken.access_token);
+        var userInfo = await GithubProvider.getUserInfo(accessToken.AccessToken);
 
         return new GithubLogin()
         {

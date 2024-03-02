@@ -40,6 +40,7 @@ public class GithubUser : ProviderUser
     [JsonPropertyName("hireable")] public bool? Hireable { get; set; }
     [JsonPropertyName("html_url")] public Uri HtmlUrl { get; set; }
     [JsonPropertyName("id")] public long Id { get; set; }
+    IFormattable ProviderUser.Id => Id;
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("ldap_dn")]

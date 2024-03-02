@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Identity;
+using StudentManager.Authentication;
 using StudentManager.Models;
 using StudentManager.Models.DBUtils;
+using StudentManager.Models.Json;
+using StudentManager.Utils.LoginHelpers;
+using StudentManager.Utils.LoginHelpers.Providers;
 
 DotNetEnv.Env.TraversePath().Load();
 
@@ -19,6 +23,8 @@ builder.Services.AddScoped<IModelRepository<Student>, EFStudentRepository>();
 builder.Services.AddScoped<IModelRepository<Education>, EFEducationRepository>();
 builder.Services.AddScoped<IModelRepository<ClassModel>, EFClassRepository>();
 builder.Services.AddScoped<IModelRepository<Course>, EFCourseRepository>();
+
+builder.Services.AddSingleton<OAuthProviderService, OAuthProviderService>();
 
 builder.Services.AddDbContext<AppIdentityDbContext>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -63,6 +69,14 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Student}/{action=List}");
+
+/*Type t = typeof(MicrosoftOAuthProviderCopy);
+Type t2 = typeof(BaseOAuthProvider);
+
+BaseOAuthProvider hell0 = (BaseOAuthProvider) new MicrosoftOAuthProviderCopy();*/
+
+//Console.WriteLine(t2.IsAssignableFrom(t));
+
 
 app.Run();
 

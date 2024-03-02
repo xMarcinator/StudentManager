@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StudentManager.Authentication;
 using StudentManager.Models.ControllerModels;
 using StudentManager.Utils.LoginHelpers;
 using StudentManager.Utils.LoginHelpers.Providers;
@@ -10,10 +11,13 @@ public class OAuthController : Controller
 {
     private UserManager<IdentityUser> userManager;
     private SignInManager<IdentityUser> signInManager;
+    private OAuthProviderService providerService;
+    
     public OAuthController(UserManager<IdentityUser> userMgr,
-        SignInManager<IdentityUser> signInMgr) {
+        SignInManager<IdentityUser> signInMgr,OAuthProviderService providerService){
         userManager = userMgr;
         signInManager = signInMgr;
+        this.providerService = providerService;
     }
     
     public IActionResult Github(string? returnUrl) {

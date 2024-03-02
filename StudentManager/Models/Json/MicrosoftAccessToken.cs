@@ -2,7 +2,7 @@
 
 namespace StudentManager.Utils.LoginHelpers.Providers;
 
-public class MicrosoftAccessToken
+public class MicrosoftAccessToken : IOAuthToken
 {
     [JsonPropertyName("access_token")]
     public string AccessToken { get; set; }

@@ -37,7 +37,9 @@ public class StudentManagementDb : DbContext
 
         if (Environment.GetEnvironmentVariable("DBPASS").IsNotNull(out var pass))
             builder.Password = pass;
-
+        
+        Console.WriteLine(builder.ConnectionString);
+        
         optionsBuilder.UseSqlServer(builder.ConnectionString);
     }
 

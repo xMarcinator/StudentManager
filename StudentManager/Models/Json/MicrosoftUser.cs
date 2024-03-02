@@ -1,4 +1,6 @@
-﻿namespace StudentManager.Models.Json;
+﻿using StudentManager.Utils.LoginHelpers;
+
+namespace StudentManager.Models.Json;
 
 using System;
 using System.Collections.Generic;
@@ -7,7 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Globalization;
 
-public class MicrosoftUser
+public class MicrosoftUser : ProviderUser
 {
     [JsonPropertyName("businessPhones")]
     public string[] BusinessPhones { get; set; }
@@ -22,7 +24,7 @@ public class MicrosoftUser
     public string JobTitle { get; set; }
 
     [JsonPropertyName("mail")]
-    public string Mail { get; set; }
+    public string Email { get; set; }
 
     [JsonPropertyName("mobilePhone")]
     public string MobilePhone { get; set; }
@@ -38,7 +40,12 @@ public class MicrosoftUser
 
     [JsonPropertyName("userPrincipalName")]
     public string UserPrincipalName { get; set; }
-
+    
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
+    
+    //ProviderUSer
+    public string Name => DisplayName;
+    
+    IFormattable ProviderUser.Id => Id;
 }
